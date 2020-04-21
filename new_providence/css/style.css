@@ -130,8 +130,8 @@
   background-size: cover;
   padding-top: 200px;
   margin: 0;
-  padding-left: 0;
-  padding-right: 0;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 
 .intro__inner {

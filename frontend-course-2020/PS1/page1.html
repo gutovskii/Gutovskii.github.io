@@ -1,53 +1,110 @@
-<body style="overflow: hidden;">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<img src="./images/pasta.jpg" width="100%" style="position: absolute; z-index: -1">
-<header align="middle">
-  <br>
-  <h1 style="color: white">SPAGHETTI.ua</h1>
-  <hr>
-  <div class="button">Меню</div>
-  <div class="button">Доставка та оплата</div>
-  <div class="button">Замовити</div>
-</header>
-<main>
-  <h1>Макарони додому</h1>
-  <h3>Безкоштовна доставка в радіусі 5км!</h3>
-</main>
-<footer>
-  <div><img width="20" src="./images/phone.svg">+380 98 765 43 21</div>
-  <div><img width="20" src="./images/email.svg">buy@spaghetti.ua</div>
-</footer>
-<style>
-  .button {
-    display: inline-block;
-    height: 30px;
-    width: 90px;
-    vertical-align: bottom;
-    text-align: center;
-    line-height: 30px;
-    background: white;
-  }
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Макарони додому</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Lobster&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.ico" type="images/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body style="overflow: hidden;">
+   
+    <img class="background">
+    <header align="middle">
+      <br>
+      <h1 style="color: white">SPAGHETTI.ua</h1>
+      <hr>
+      <a class="button" href="#">Меню</a>
+      <a class="button" href="#">Доставка та оплата</a>
+      <a class="button" href="#">Замовити</a>
+    </header>
+    <main>
+      <h1 class="heading">Макарони додому</h1>
+      <h3 class="subheading">Безкоштовна доставка в радіусі <span>5км!</span></h3>
+    </main>
+    <footer>
+      <div class="contact" >
+        <img width="20" src="./images/phone.svg">
+        <a href="tel:+380 98 765 43 21">+380 98 765 43 21</a>
+      </div>
+      <div class="contact">
+        <img width="20" src="./images/email.svg">
+        <a href="mailto:buy@spaghetti.ua">buy@spaghetti.ua</a>
+      </div>
+    </footer>
+    <style>
+      body{
+        margin: 0;
+      }
+      .background{
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        z-index: -1;
+        background: #1D2226 url("./images/pasta.jpg") no-repeat center;
+        background-size: cover;
+      }
+      .button{
+        display: inline-block;
+        height: 30px;
+        vertical-align: bottom;
+        text-align: center;
+        line-height: 30px;
+        background: white;
+        cursor: pointer;
+      }
 
-  .button:hover { background-color: lightgrey; }
+      .button:hover{ 
+        background-color: lightgrey; 
+      }
 
-  main {
-    text-align: center;
-    margin-top: 150px;
-    font-size: 2rem;
-    color: white;
-  }
+      .heading{
+        color: #0c0e50;
+        text-transform: uppercase;
+        font-family: "Lobster", sans-serif;
+        background: #908D6E;
+      }
+      .subheading{
+        color: #0c0e50;
+        font-family: "Lobster", sans-serif;
+        background: #908D6E;
+      }
+      .subheading span{
+        color: #2CFF00;
+      }
+      
+      .contact{
+        display: inline-flex;
+        -ms-align-items: center;
+        align-items: center;
+      }
+      .contact img{
+        padding-right: 5px;
+      }
+      .contact a{
+        text-decoration: none;
+        color: #000;
+      }
+      main {
+        text-align: center;
+        margin-top: 150px;
+        font-size: 2rem;
+        color: white;
+      }
 
-  footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: rgba(255, 255, 255, .7);
-    text-align: center;
-  }
+      footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, .7);
+        text-align: center;
+      }
 
-  footer div {
-    display: inline-block;
-    margin: 10px;
-  }
-</style>
-</body>
+      footer div {
+        display: inline-block;
+        margin: 10px;
+      }
+    </style>
+  </body>
+</html>

@@ -15,6 +15,7 @@
       padding-right: 10px;
       vertical-align: top;
     }
+    input[type=date]:invalid { background: #FF0000; }
     label:first-child { width: 40%; }
     input[type=checkbox] { display: none; }
     label:last-child { text-align: left; }
@@ -46,7 +47,7 @@
     <legend>Информация про вас</legend>
     <div class="control">
       <label>Год вашего рождения</label>
-      <input>
+      <input type="date" value="2003-12-30" min="1900-01-01" max="2020-01-01" autofocus>
     </div>
     <div class="control">
       <label>Расскажите о своих увлечениях</label>

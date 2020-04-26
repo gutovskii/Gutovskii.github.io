@@ -68,6 +68,7 @@
     }
     .hidden { display: none }
     #modal {
+      position: relative;
       position: fixed;
       top: 0;
       left: 0;
@@ -77,6 +78,33 @@
       background-color: white;
       border-radius: 10px;
       z-index: 2;
+    }
+    .cross{
+      position: relative;
+      position: absolute;
+      top: 8px;
+      right: 66px;
+      height: 50px;
+      width: 50px;
+      background: red;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+    .cross:before, .cross:after{
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: 6px;
+      width: 40px;
+      height: 12px;
+      background: #000;
+      border-radius: 10px;
+    }
+    .cross:before{
+      transform: rotate(45deg); 
+    }
+    .cross:after{
+      transform: rotate(-45deg); 
     }
     .team {
       display: flex;
@@ -124,6 +152,7 @@
     <button id="show">Дізнатись більше про нас</button>
   </div>
   <div id="modal" class="hidden">
+    <div class="cross hide"></div>
     <h2>Наша супер-команда</h2>
     <div class="team">
       <img src="https://loremflickr.com/100/80?lock=1" class="person" data-name="Pauline R. Skiles">

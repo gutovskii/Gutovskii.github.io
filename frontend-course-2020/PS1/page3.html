@@ -9,6 +9,9 @@
     body {
       background-image: url("images/p3-bg.png");
       font-family: 'Roboto', 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     header {
       position: fixed;
@@ -21,6 +24,7 @@
     footer {
       padding: 20px 100px;
       background: rgba(255, 255, 255, .55);
+      margin-top: 65px;
     }
     nav { font-family: 'Roboto Slab', serif }
     nav a { margin: 0 10px }
@@ -40,7 +44,11 @@
       justify-content: space-between;
       flex-wrap: wrap;
     }
-    main { position: relative; top: 65px;}
+    main { 
+      position: relative; 
+      top: 65px;
+      flex-grow: 1;
+    }
     .container {
       max-width: 900px;
       margin: 0 auto;
@@ -102,8 +110,7 @@
       animi cumque doloribus error fugit inventore, nemo numquam quo repudiandae suscipit ut voluptates. Asperiores
       laudantium quos soluta!
     </div>
-    <div>Accusantium aliquid aspernatur commodi corporis dolorem ea ex expedita fugit illo ipsa iusto magnam nemo officiis
-      placeat porro possimus reiciendis rem rerum saepe sapiente sed sint sunt ullam ut, voluptate!
+    <div>Accusantium aliquid aspernatur commodi corporis dolorem ea ex expedita Accusantium aliquid aspernatur commodi corporis dolorem ea ex expedita fugit illo ipsa iusto magnam nemo officiis
     </div>
     <div>Ab accusamus adipisci, asperiores autem culpa eveniet ex explicabo iste iure, laboriosam magni modi nesciunt non
       nostrum nulla odio perspiciatis quidem quisquam rerum, sed similique tenetur unde? Accusamus, numquam, quisquam?

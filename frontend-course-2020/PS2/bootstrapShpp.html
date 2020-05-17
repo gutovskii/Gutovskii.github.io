@@ -3,46 +3,315 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Bootstrap</title>
-	<link rel="stylesheet" href="style.css">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
-
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-2">
-				<div class="row">
-					<div class="navbar navbar-dark bg-dark col-12">
-						<div class="navbar-header">
-							<a href="#" class="navbar-brand">TravelUp</a>
+
+			<div class="col-2 p-0 bg-light">	
+				<div class="navbar navbar-dark bg-dark shadow">
+					<a href="#" class="navbar-brand">TravelUp</a>
+				</div>
+				<div class="bg-light pt-3">
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<a href="#" class="nav-link text-dark font-weight-bold"><i class="pr-1 fas fa-home"></i>Dashboard</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link text-dark font-weight-bold"><i class="pr-1 far fa-file"></i>Orders</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link text-dark font-weight-bold"><i class="pr-1 fas fa-shopping-cart"></i>Products</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link text-dark font-weight-bold"><i class="pr-1 fas fa-users"></i>Customers</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link text-dark font-weight-bold"><i class="pr-1 far fa-chart-bar"></i>Reports</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="hover nav-link text-dark font-weight-bold"><i class="pr-1 fas fa-layer-group"></i>Intergrations</a>
+						</li>
+					</ul>
+					<p class="d-flex justify-content-between align-items-center pt-3 pl-3 mb-0 text-uppercase text-muted font-weight-bold">Saved reports<i class="fas fa-plus-circle pr-3"></i></p>
+					<ul class="nav flex-column">	
+						<li class="nav-item">
+							<a href="#" class="not-class nav-link text-dark font-weight-bold"><i class="pr-1 far fa-file-alt"></i>Current month</a> 
+						</li>
+						<li class="nav-item">
+							<a href="#" class="not-class nav-link text-dark font-weight-bold"><i class="pr-1 far fa-file-alt"></i>Last quarter</a> 
+						</li>
+						<li class="nav-item">
+							<a href="#" class="not-class nav-link text-dark font-weight-bold"><i class="pr-1 far fa-file-alt"></i>Social engagement</a> 
+						</li>
+						<li class="nav-item">
+							<a href="#" class="not-class nav-link text-dark font-weight-bold"><i class="pr-1 far fa-file-alt"></i>Year-end sale</a> 
+						</li>
+					</ul>
+				</div>
+			</div> <!-- /.col-2 -->
+
+			<div class="col-10 p-0">
+				<div> <!-- Пустой див чтобы все было в кучке -->
+					<div class="bg-dark h-100 d-flex align-items-center border-left border-dark" style="padding-right: 1px;"><!-- див для ИНПУТ-ГРУППЫ ↑ -->
+						<div class="input-group shadow" style="padding: .3rem 0rem;">				
+							<input type="search" class="form-control rounded-0 border-0" placeholder="Search">
+							<div class="input-group-prepend rounded-0 h-100" style="padding: .3rem 0rem;">
+								<a href="#" class="input-group-text bg-transparent border-0 text-white-50">Sign out</a>
+							</div>
 						</div>
 					</div>
-				</div>
-			</div>
-			<div class="col-10 bg-dark">
-				<div class="row">
-					<div class="input-group">
-						<input type="search" class="anti-border-rad anti-border search form-control bg-secondary" placeholder="Search">
-						<div class="input-group-append">
-							<a href="#" class="anti-border anti-borderrad input-group-text bg-dark">Sign out</a>
+					<div class="container-fluid border-left pl-4 pr-4"> <!-- див для ТАБЛИЦЫ -->
+						<div class="pt-3 pb-4 d-flex justify-content-between">
+							<h2 class="font-weight-bold">Customers</h2>
+							<div class="d-flex">
+								<div> <!-- Чтобы группа кнопок не падала вниз -->
+									<div class="btn-group bg-transparent border border-dark rounded-sm" role="group">
+										<a href="#" role="borderedButton"><button class="btn btn-md btn-light text-muted">Share</button></a>
+										<a href="#"><button class="btn btn-md btn-light text-muted">Export</button></a>
+									</div>
+								</div>
+								<div class="dropdown pl-2" style="padding-right: 1px;">
+									<button id="dropdownWeek" class="btn btn-md btn-light dropdown-toggle border border-dark rounded-sm text-muted" data-toggle="dropdown">
+										<i class="pr-1 far fa-calendar"></i>
+									    This week
+									</button>
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+						<table class="table table-striped table-sm">
+							<thead>
+								<tr>
+									<th><input type="checkbox"></th>
+									<th>#</th>
+									<th>Name Surname</th>
+									<th>Age</th>
+									<th>City</th>
+									<th>Status</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+								<tr class="bg-success text-light">
+									<td><input type="checkbox" checked></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><input type="checkbox"></td>
+									<td>1,001</td>
+									<td>Lorem</td>
+									<td>18</td>
+									<td>dolor</td>
+									<td>sit</td>
+									<td>
+										<div class="btn-group">
+											<button class="btn btn-danger">Delete</button>
+											<button class="btn btn-warning">Edit</button>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<nav style="padding-bottom: 26px !important;">
+							<ul class="pagination">
+								<li class="page-item">
+									<a href="#" class="page-link">
+										<span>&laquo;</span>
+									</a>
+								</li>
+								<li class="page-item active">
+									<a href="#" class="page-link">1</a>
+								</li>
+								<li class="page-item">
+									<a href="#" class="page-link">2</a>
+								</li>
+								<li class="page-item">
+									<a href="#" class="page-link">3</a>
+								</li>
+								<li class="page-item">
+									<a href="#" class="page-link">
+										<span>&raquo;</span>
+									</a>
+								</li>
+							</ul>
+						</nav>
+					</div> <!-- /.container-fluid для ТАБЛИЦЫ -->
+				</div> <!-- Пустой див -->
+			</div> <!-- /.col-10 -->
+
+		</div> <!-- /.row -->
+	</div> <!-- /.container-fluid -->
     
     <style>
-    	.anti-border-rad{ border-radius: 0 !important; }
-    	.anti-border{ border: none !important; }
-    	.search::placeholder{ color: #CDC0BC; }
-    	.aicenter{ align-items: center; }
+    	body{ font-family: Roboto, sans-serif; }
+
+    	.not-class{} /* для элементов менюшки */
+    	a.text-dark:hover:not(.not-class){ 
+    		color: #147BFF !important;
+    	}
+
+        input[type="search"]::placeholder{ color: #6C757D; }
+        input[type="search"]{
+        	height: calc(2em + .75rem + 2px); 
+        	background: #494E53 !important;
+        	color: #B1B5B9 !important;
+        }
+
+        a[role="borderedButton"]{ border-right: 1px solid #343A40; } /* Правый бордер кнопки "Share" */
+        button[data-toggle="dropdown"]{
+        	padding: .45em .75em;
+        }
+
+        .navbar{ background: #272B30 !important; }
+    	.nav-item:hover{ color: blue; }
+
+    	.fa-plus-circle{ cursor: pointer; }
+        .fa-plus-circle:hover{ color: #5980E8; } 
     </style>
 
 	<!-- Script -->
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/a92211bf3b.js" crossorigin="anonymous"></script>
+
 </body>
 </html>

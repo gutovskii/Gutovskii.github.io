@@ -27,6 +27,7 @@ body{
 
 .cols(@i) when (@i > 0) {
 	.col-@{i} {
+		display: flex;
 		@width: calc(100% / @cols_count * @i - @col_margin);
 		width: @width;
 		background: hsl(@i * 10, 50%, 50%);

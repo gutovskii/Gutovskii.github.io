@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Сетка</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <title>Сетка и кнопка</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
 
   <!-- Styles (Less) -->
   <link rel="stylesheet/less" href="styles/grid.less">
+  <link rel="stylesheet/less" href="styles/button.less">
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/3.9.0/less.min.js" ></script>
@@ -35,7 +36,17 @@
 			<div class="col-5">5</div>
 			<div class="col-3">3</div>
 			<div class="col-1">1</div>
+
+			<button class="button"><i class="fas fa-check"></i>Accept a form</button>
+			<a href="#" class="button"><i class="fas fa-check"></i>Accept a form</a>
+			<div class="button" tabindex="1"><i class="fas fa-check"></i>Accept a form</div>
+			<input type="range" class="button">
+			<img tabindex="0" src="fish.png" alt="" class="button">
+			<input type="submit" class="button">
+			
 		</div>
   	</div>
+
+  	<script src="https://kit.fontawesome.com/a92211bf3b.js" crossorigin="anonymous"></script> <!-- fontawesome -->
 </body>
 </html>

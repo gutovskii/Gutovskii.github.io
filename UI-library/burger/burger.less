@@ -1,0 +1,90 @@
+nav{
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px;
+	background-color: #1E1E1E;
+
+	.logo{
+		display: flex;
+		align-items: center;
+		margin-left: 50px;
+		cursor: pointer;
+		img{
+			margin-right: 15px;
+			width: 75px;
+			height: 75px;
+		}
+		a{
+			font-size: 20px;
+			font-weight: 700;
+			text-decoration: none;
+			color: #fff;
+			letter-spacing: 1px;
+		}
+	}
+	.burger{
+		display: none;
+	}
+	.nav-menu {
+		margin-right: 40px; // потому что у каждого li margin-right 10px
+		li{
+			display: inline;
+			margin: 10px;
+			a{
+				text-decoration: none;
+				color: #fff;
+			}
+		}
+	}
+}
+@media (min-width: 768px){
+	.nav-menu{
+		display: block !important; // от 768рх меню отображается
+	}
+}
+@media (max-width: 768px){
+	.logo{
+		position: relative;
+		transform: translateX(-75%);
+		left: 50%;
+	}
+	.burger{
+		display: block !important;
+		float: right;
+		margin-right: 30px;
+		cursor: pointer;
+		i{
+			font-size: 45px;
+			color: #EA0000;
+		}
+	}
+	.nav-menu{   
+		display: none; // до 768рх меню не должно отображаться
+		position: absolute;
+		top: 100%; // выносим вниз
+		left: 50%; // чтобы не было отступа слева
+		transform: translateX(-50%); // чтобы не было отступа слева
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		li{
+			background-color: lighten(#1E1E1E, 10%);
+			text-align: center;
+			list-style-type: none;
+			display: list-item !important;
+			margin: 0 !important;
+			padding: 10px 0;
+			cursor: pointer;
+			box-shadow: inset 0px 0px 5px #1E1E1E;
+			transition: all .1s linear;
+			&:hover{
+				background-color: lighten(#1E1E1E, 20%);
+			}
+			a{
+				padding: 10px 0;
+			}
+		}
+	}
+}

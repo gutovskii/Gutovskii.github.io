@@ -2,20 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>UI-library</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
 
   <!-- Styles (Less) -->
   <link rel="stylesheet/less" href="styles/grid.less"> <!-- сетка -->
   <link rel="stylesheet/less" href="styles/button.less"> <!-- кнопка -->
-  <link rel="stylesheet/less" href="modal/modal.less">
+  <link rel="stylesheet/less" href="modal/modal.less"> <!-- модалка -->
+  <link rel="stylesheet/less" href="burger/burger.less"> <!-- бургер -->
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/3.9.0/less.min.js" ></script>
 </head>
 <body>
+
+	<!-- Grid Сетка //////////////////////////////////////////// -->
   	<div class="container">
 		<div class="row">
+			
 			<div class="col-12">
 				<div class="col-3">
 					<div class="col-2">123</div>
@@ -29,33 +34,35 @@
 				<div class="col-3">123</div>
 				<div class="col-3">123</div>
 			</div>
-
+			
 			<div class="col-6">6</div>
 			<div class="col-6">6</div>
-
+			
 			<div class="col-3">3</div>
 			<div class="col-5">5</div>
 			<div class="col-3">3</div>
 			<div class="col-1">1</div>
 		</div>
   	</div>
-
+	
+	<!-- Кнопка //////////////////////////////////////////// -->
 	<div class="row">
 		<button class="button"><i class="fas fa-check"></i>Accept a form</button>
 		<a href="#" class="button"><i class="fas fa-check"></i>Accept a form</a>
 		<div class="button" tabindex="1"><i class="fas fa-check"></i>Accept a form</div>
 		<input type="range" class="button">
-		<img src="fish.png" alt="" class="button">
+		<img src="img/fish.png" alt="" class="button">
 		<input type="submit" class="button">
 	</div>
-
+	
+	<!-- Модальное Окно //////////////////////////////////////////// -->
 	<div class="modal" id="send">
 		<div class="modal-bg"></div>
 		<div class="modal-content">
-			<header class="modal-header">
+			<div class="modal-header">
 				<h1>Lorem ipsum dolor</h1>
-			</header>
-			<main class="modal-main">
+			</div>
+			<div class="modal-main">
 				<div class="modal-text">
 					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab atque eveniet, corporis assumenda quis natus dolorem illo iste</p>
 					<p>Iste eos, dolorem obcaecati doloribus expedita qui cupiditate voluptatum assumenda nesciunt quia provident recusandae at consectetur enim aut</p>
@@ -67,19 +74,36 @@
 					<p>Iste eos, dolorem obcaecati doloribus expedita qui cupiditate voluptatum assumenda nesciunt quia provident recusandae at consectetur enim aut</p>
 					<p>debitis libero saepe vitae itaque laborum repudiandae reprehenderit. Numquam consequatur veritatis officia quibusdam suscipit!</p>					
 				</div>
-			</main>
-			<footer class="modal-footer">
+			</div>
+			<div class="modal-footer">
 				<div class="modal-btnbox">
-					<a href="#" class="btn">Подтвердить</a>
+					<a href="#" class="btn" onclick="closed()">Подтвердить</a>
 					<a href="#" class="btn" onclick="closed()">Отменить</a>
 				</div>
-			</footer>
+			</div>
 		</div>
 	</div>		
 
 	<button class="modal-trigger button" data-target="send" onclick="openModal(this)">Открыть модалку</button>
-	
-    <script type="text/javascript" src="modal/modal.js"></script>
+    
+    <!-- Бургер //////////////////////////////////////////// -->
+	<nav>
+	    <div class="logo">   	
+	    	<img src="img/logo.png">
+	    	<a href="#">McDonald's</a>
+	    </div>
+	    <div class="burger" onclick="openMenu()">
+	    	<i class="fas fa-bars"></i>
+	    </div>
+	    <ul class="nav-menu">
+	        <li><a href="link1">Пункт 1</a></li>
+	        <li><a href="link2">Пункт 2</a></li>
+	        <li><a href="link3">Пункт 3</a></li>
+	    </ul>
+	</nav>
+
+	<script type="text/javascript" src="burger/burger.js"></script> <!-- js бургер -->
+    <script type="text/javascript" src="modal/modal.js"></script> <!-- js модалка -->
   	<script src="https://kit.fontawesome.com/a92211bf3b.js" crossorigin="anonymous"></script> <!-- fontawesome -->
 </body>
 </html>

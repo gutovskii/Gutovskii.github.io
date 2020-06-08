@@ -5,17 +5,26 @@ var config1 = [
 	"https://loremflickr.com/220/240?lock=4",
 	"https://loremflickr.com/220/140?lock=5"
 ]
+var config2 = [
+	"https://loremflickr.com/320/240?lock=6",
+	"https://loremflickr.com/250/240?lock=7",
+	"https://loremflickr.com/420/340?lock=8"
+]
 function carousel(id, config){
-	var carousel = document.getElementById(id); // берем карусельку 
-	var wrapper = document.querySelector(".wrapper"); // берем блок где все картинки
+	var carousel = document.getElementById(id); // берем карусельку
+	var wrapper = carousel.querySelector(".wrapper"); // берем блок где все картинки
 
-	var imgsWidth = []; // возьмет ширину всех картинок
-	var sumWidth = 0; // будет шириной род элемента картинок
+    var left = carousel.querySelector(".left"); // ЛЕВАЯ стрелка
+    var right = carousel.querySelector(".right"); // ПРАВАЯ стрелка
+
+	var imgsWidth = []; // ширина всех картинок
+	var sumWidth = 0; // ширина род элемента картинок
 
 	var itemIndex = 0; // чекер для переходов слайдера
-	var traslater = 0; // для правлиных переходов слайдера
-	
-	for( var i in config ){ // вставляем картинки
+	var traslater = 0; // для правильных переходов слайдера
+
+	// ВСТАВЛЯЕМ КАРТИНКИ
+	for( var i in config ){ 
 		var img;
 		img = document.createElement("img");
 		img.src = config[i];    
@@ -76,3 +85,4 @@ function carousel(id, config){
 	}
 }
 carousel("carousel1", config1);
+carousel("carousel2", config2);

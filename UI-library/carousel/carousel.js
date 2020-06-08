@@ -31,6 +31,7 @@ function carousel(id, config){
 	var wrapperImgs = wrapper.querySelectorAll('img'); // все наши картинки
 	
 	// CSS НАСТРОЙКИ ДЛЯ КАРУСЕЛИ
+	carousel.style.transition = 'all .05s linear';
 	carousel.style.marginLeft = 'auto';
 	carousel.style.marginRight = 'auto';
 	carousel.style.overflow = 'hidden';

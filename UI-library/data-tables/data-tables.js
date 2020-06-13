@@ -44,10 +44,11 @@ function dataTable(config, data) {
     for ( var col of config.columns ){ // тут берем объекты в config.columns
     	var th
     	th = document.createElement('th')
+    	th.className = 'jstd-and-th' // CSS 
     	th.innerText = col.title
     	
     	if ( col.type == 'number' ){
-    		th.className = 'align-right'
+    		th.className = 'align-right jstd-and-th'
     	}
     	trHead.appendChild(th) // <th> => <tr>
     }
@@ -60,22 +61,30 @@ function dataTable(config, data) {
     	for ( var configObj = 0; configObj < config.columns.length; configObj++ ){
     		var td
     		td = document.createElement('td')
+    		td.className = 'jstd-and-th' // CSS 
 
     		var value = config.columns[configObj].value // наш value в config'e
     		td.innerText = data[dataObj][value] // через value ↑ находим свойство в data и берем ее значение
     		if ( value == '_index' ){ 
     			td.innerText = index
+    			td.className = 'id jstd-and-th' // CSS 
     		}
 
     		var type = config.columns[configObj].type // берем type у значения свойства
     		if ( type == 'number' ){
-    			td.className = 'align-right'
+    			td.className = 'align-right jstd-and-th' // CSS 
     		}
     		trBody.appendChild(td) // <td> => <tr>
     	}
     	tbody.appendChild(trBody) // <td> => <tbody>
     }
 
+    // CSS 
+    tableElem.className = 'jstable'
+    thead.className = 'jsthead'
+    tbody.className = 'jstbody'
+
+    // КОНСРТУИРУЕМ ТАБЛИЦУ
 	thead.appendChild(trHead)    // <tr> => <thead>
 	tableElem.appendChild(thead) // <thead> => <table>
 	tableElem.appendChild(tbody) // <tbody> => <table>

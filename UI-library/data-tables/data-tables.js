@@ -3,12 +3,15 @@ const config_1 = { // пишу через _ потому что уже есть 
   parent: '#usersTable',
   columns: [
     {title: '№', value: '_index'},
+    {title: 'Дата регистрации', value: (user) => calculateData(user.createdAt, 'registration'), sortable: true},
     {title: 'Имя', value: 'name', sortable: true},
+    {title: 'Аватар', value: 'avatar', type: 'image'},
     {title: 'Фамилия', value: 'surname', sortable: true},
-    {title: 'Возраст', value: 'age', type: 'number', sortable: true}
+    {title: 'Возраст', value: (user) => calculateData(user.birthday, 'age'), sortable: true, type: 'number'}
   ],
+  apiUrl: 'https://5f34ff0d9124200016e1941b.mockapi.io/api/v1/users',
   search: {
-  	fields: ['name', 'age'],
+  	fields: ['name', 'surname'],
   	filters: [
   	  v => v.toLowerCase(),
   	  v => v.toUpperCase(),
@@ -42,7 +45,17 @@ const config_2 = {
 		{title: 'Experience', value: 'exp', sortable: true}
 	],
 	search: {
-		fields: ['name']
+		fields: ['name', 'exp'],
+		filters: [
+			v => v.toLowerCase(),
+  	 		v => v.toUpperCase(),
+		  	v => toKeyboardLayout(v, 'ru'),
+		  	v => toKeyboardLayout(v, 'ru').toLowerCase(),
+		  	v => toKeyboardLayout(v, 'ru').toUpperCase(),
+		  	v => toKeyboardLayout(v, 'en'),
+		  	v => toKeyboardLayout(v, 'en').toLowerCase(),
+		  	v => toKeyboardLayout(v, 'en').toUpperCase()
+		]
 	}
 }
 const workers = [
@@ -77,23 +90,54 @@ var rusLetters = {
 	     'Ч','С','М','И','Т','Ь','Б','Ю' ]
 }
 var defaultArrays = [], // Для хранения дефолтных массивов
-    defaultSeacrhedData = [] // Дефолтный массив для найденных элементов
+    defaultSeacrhedData = [], // Дефолтный массив для найденных элементов
+   	onSearch = [], // Для понятия нашло ли элементы
+   	tableArray = [] // Хранение таблиц
 
-var toStopPush = true, // Для остановки push'а таблиц в массив
-    tableIteration = 0, // это индексы для хранения дефолтных массивов
-    tableIndex, // Индекс для работы с определенной таблицы
-    onSearch = [] // Для понятия нашло ли элементы
-
-// ДЛЯ searchTable 
-var focused = false // Для фокуса на инпуте
-var inputValue = []
+var tableIteration = 0, // индекс для записи данных определенной таблицы
+    tableIndex // Индекс для работы с определенной таблицы
 
 // ДЛЯ renderTable
 var toSort = [], // Для сортирвки каждой таблицы
-    tableArray = [] // Хранение таблиц
+    sortedColumn // Запоминаем сортируешуюся колонку
 
-var sortedColumn // Запоминаем сортируешуюся колонку
+function calculateData(date, toCalculate){
+	var nowadayTime = new Date()
+	var setDate = new Date(date)
 
+	if ( toCalculate == 'age' ){
+		var age = (nowadayTime - setDate) / 1000 / 60 / 60 / 24 / 365
+		var lastNumeral = Math.floor(age) % 10 // последняя цифра в числе
+		var ymw // типа year month week
+
+		if ( Math.floor(age) >= 1 ){
+			if ( lastNumeral == 1 ) ymw = 'год'
+			if ( lastNumeral > 1 && lastNumeral < 5 ) ymw = 'года'
+			if ( lastNumeral >= 5 ) ymw = 'лет'
+		}
+		if ( Math.floor(age) === 0 ){
+			age *= 12
+			lastNumeral = Math.floor(age) % 10
+			if ( lastNumeral == 1 ) ymw = 'месяц'
+			if ( lastNumeral > 1 && lastNumeral < 5 ) ymw = 'месяца'
+			if ( lastNumeral >= 5 || (Math.floor(age) >= 10 && Math.floor(age) <= 20) ) ymw = 'месяцев'
+			if ( age < 1 ) {
+				age *= 4
+				lastNumeral = Math.floor(age) % 10
+				if ( lastNumeral == 1 ) ymw = 'неделя'
+				if ( lastNumeral > 1 ) ymw = 'недели'
+			}
+		}
+		return Math.floor(age) + ' ' + ymw
+	}
+	if ( toCalculate == 'registration' ){
+		var days = ('0' + setDate.getDate()).slice(-2),
+			month = ('0' + (setDate.getMonth() + 1)).slice(-2),
+			year = setDate.getFullYear()
+
+		return days + '.' + month + '.' + year
+	}
+}
 function toKeyboardLayout(str, lang) {
 	var newStr = str.split('') // делаем массив из заданной строки 
 
@@ -134,99 +178,96 @@ function toKeyboardLayout(str, lang) {
 }
 /*
 	АРГУМЕНТЫ:
-	1. input - инпут в который мы вводим
+	1. input - вводимый инпут
 	2. config - данные для шапки
 	3. data - допустим данные наших работников
 	4. tableToChange - какую таблицу очищать
 */
 
 function dataSearch(input, config, data, tableToChange){
-	input.oninput = () => {
 
-		tableToChange.innerHTML = '' // убираем таблицу
+	var tableBox = tableToChange.parentNode // наш див
+	var input = tableBox.querySelector('.table-search')
+	input.parentNode.querySelector('span').innerText = '' // убираем текст со спана
 
-		var searchValues = [] // Элементы в fields
+	tableToChange.innerHTML = '' // убираем таблицу
 
-		// СОЗДАЕМ ИНДЕКС ДЛЯ РАБОТЫ С ОПРЕДЕЛЕННЫМИ ДАННЫМИ ОПРЕДЕЛЕННОЙ ТАБЛИЦЫ
-		tableIndex = tableArray.indexOf(tableToChange)
-		inputValue[tableIndex] = input.value // это мы подставим для новосозданного инпута
+	// СОЗДАЕМ ИНДЕКС ДЛЯ РАБОТЫ С ОПРЕДЕЛЕННЫМИ ДАННЫМИ ОПРЕДЕЛЕННОЙ ТАБЛИЦЫ
+	tableIndex = tableArray.indexOf(tableBox)
 
-		focused = true // делаем фокус
-		toStopPush = false // останавливаем push таблиц
-
-		var paramIndex = 0
-		// БЕРЕМ ВСЕ value У ДАННЫХ ШАПКИ И ВСЕ КИДАЕМ В searchValues 
-		// можно конечно просто прировнять, а потом удалить '_index', но
-		// если у нас будет несколько элементов которые мы не должны брать?
-		for ( i in config.columns ){
-			// сюда ↓ добавляем элементы которые не нужно добавлять
-			if ( config.columns[i].value != '_index' ){
-				searchValues[paramIndex] = config.columns[i].value
-				paramIndex++
-			}
-		}	
-		// ЕСЛИ ЕСТЬ fields и он заполнен норм данными
-		if ( config.search?.fields ){
-			if ( config.search.fields.length > 0 &&
-
-				 config.search.fields[0] !== undefined &&
-				 config.search.fields[0] !== null &&
-				 config.search.fields[0] !== false &&
-				 config.search.fields[0] !== true &&
-				 config.search.fields[0] !== [] ){
-
-				// приравниваем searchValues до fields
-				searchValues = config.search.fields
-			}
+	var searchValues = [] // Элементы в fields
+	var paramIndex = 0
+	// БЕРЕМ ВСЕ value У ДАННЫХ ШАПКИ И ВСЕ КИДАЕМ В searchValues 
+	// можно конечно просто прировнять, а потом удалить '_index', но
+	// если у нас будет несколько элементов которые мы не должны брать?
+	for ( i in config.columns ){
+		// сюда ↓ добавляем элементы которые не нужно добавлять
+		if ( config.columns[i].value != '_index' ){
+			searchValues[paramIndex] = config.columns[i].value
+			paramIndex++
 		}
+	}	
+	// ЕСЛИ ЕСТЬ fields и он заполнен норм данными
+	if ( config.search?.fields ){
+		if ( config.search.fields.length > 0 &&
 
-		data = [] // очищаем дата чтобы потом заполнить
-		onSearch[tableIndex] = true // мы в поисках
+			 config.search.fields[0] !== undefined &&
+			 config.search.fields[0] !== null &&
+			 config.search.fields[0] !== false &&
+			 config.search.fields[0] !== true &&
+			 config.search.fields[0] !== [] ){
 
-		// ФИЛЬТРЫ
-		if ( config.search?.filters ){
-
-			data = defaultArrays[tableIndex].filter((el) => {
-			  	return searchValues.filter((key) => {
-			    	return config.search.filters.filter((sf) => {
-			    		// На всякий случай переводим свойство в строку
-			    		return sf(el[key].toString()).includes( sf(inputValue[tableIndex]) )
-				    }).length
-				}).length
-			})
-
-			defaultSeacrhedData[tableIndex] = [ ...data ] // делаем дефолтный найденый дата
+			// приравниваем searchValues до fields
+			searchValues = config.search.fields
 		}
-
-		// ЕСЛИ НЕ НАШЛО ПО ФИЛЬТРАМ (или их нет)
-		if ( data.length == 0 ){
-
-			data = defaultArrays[tableIndex].filter((el) => {
-				return searchValues.filter((key) => {
-					return el[key].toString().includes(inputValue[tableIndex])
-				}).length
-			})
-			
-			defaultSeacrhedData[tableIndex] = [ ...data ] // делаем дефолтный найденый дата
-		}
-		// ЕСЛИ НЕ НАШЛО
-		if ( data.length == 0 ){
-			
-			onSearch[tableIndex] = false // ничего не нашли
-			data = [ ...defaultArrays[tableIndex] ] 
-		}
-
-		// ОСТАВЛЯЕМ СОРТИРОВКУ
-		keepSorting(sortedColumn, data, onSearch[tableIndex])
-		dataTable(config, data)
 	}
+
+	data = [] // очищаем дата чтобы потом заполнить
+	onSearch[tableIndex] = true // мы в поисках
+
+	// ФИЛЬТРЫ
+	if ( config.search?.filters ){
+		data = defaultArrays[tableIndex].filter((el) => {
+		  	return searchValues.filter((key) => {
+		    	return config.search.filters.filter((sf) => {
+		    		// На всякий случай переводим свойство в строку
+		    		return sf(el[key].toString()).includes( sf(input.value) )
+			    }).length
+			}).length
+		})
+
+		defaultSeacrhedData[tableIndex] = [ ...data ] // делаем дефолтный найденый дата
+	}
+
+	// ЕСЛИ НЕ НАШЛО ПО ФИЛЬТРАМ (или их нет)
+	if ( data.length == 0 ){
+
+		data = defaultArrays[tableIndex].filter((el) => {
+			return searchValues.filter((key) => {
+				return el[key].toString().includes(input.value)
+			}).length
+		})
+		
+		defaultSeacrhedData[tableIndex] = [ ...data ] // делаем дефолтный найденый дата
+	}
+	// ЕСЛИ НЕ НАШЛО
+	if ( data.length == 0 ){
+		input.parentNode.querySelector('span').innerText = 'Ничего не найдено'  // добавляем текст до спана
+		onSearch[tableIndex] = false // ничего не нашли
+		data = [ ...defaultArrays[tableIndex] ] 
+	}
+
+	// СОХРАНЯЕМ СОРТИРОВКУ
+	saveSort(sortedColumn, data, onSearch[tableIndex])
+	drawTable(config, data)
 }
-function keepSorting(column, data, searching){
+
+function saveSort(column, data, searching){
 	if ( toSort[tableIndex] == 1 ){
-		data.sort( (a, b) => b[column.value] > a[column.value] ? 1 : -1 )
+		data.sort( (a, b) => b[column.value] > a[column.value] ? 1 : -1  )
 	}
 	if ( toSort[tableIndex] == 2 ){
-		data.sort( (a, b) => b[column.value] < a[column.value] ? 1 : -1 )
+		data.sort( (a, b) => b[column.value] < a[column.value] ? 1 : -1  )
 	}
 	if ( toSort[tableIndex] == 3 ){
 			
@@ -241,21 +282,20 @@ function keepSorting(column, data, searching){
 }
 /*
 	АРГУМЕНТЫ:
-	1. button - кнопка на которую мы нажали
-	2. config - данные для шапки
-	3. data - допустим данные наших работников
-	4. column - для понимания на какую колонку мы будем ориентироваться при сортировке
-	5. tableToChange - какую таблицу очищать
+	1. config - данные для шапки
+	2. data - допустим данные наших работников
+	3. column - для понимания на какую колонку мы будем ориентироваться при сортировке
+	4. tableToChange - какую таблицу очищать
 */
 
-function renderTable(btn, config, data, column, tableToChange) {
+function sortTable(btn, config, data, column, tableToChange) {
 	btn.onclick = () => {
-
+		
+		var tableBox = tableToChange.parentNode // наш див
 		tableToChange.innerHTML = '' // убираем таблицу
 
 		// СОЗДАЕМ ИНДЕКС ДЛЯ РАБОТЫ С ОПРЕДЕЛЕННЫМИ ДАННЫМИ ОПРЕДЕЛЕННОЙ ТАБЛИЦЫ
-		tableIndex = tableArray.indexOf(tableToChange)
-
+		tableIndex = tableArray.indexOf(tableBox)
 		sortedColumn = column
 
 		// В том случае если мы ищем
@@ -266,8 +306,6 @@ function renderTable(btn, config, data, column, tableToChange) {
 
 		toSort[tableIndex]++
 
-		// Использую keepSorting, а оно не приравнивает дата, когда toSort[tableIndex] == 3
-		// Не делает data = [ ...defaultArrays[tableIndex] ]
 		if ( toSort[tableIndex] == 1 ){
 			data.sort( (a, b) => b[column.value] > a[column.value] ? 1 : -1 )
 		}
@@ -284,45 +322,22 @@ function renderTable(btn, config, data, column, tableToChange) {
 				data = [ ...defaultSeacrhedData[tableIndex] ]
 			}
 		}
-
-		toStopPush = false // останавливаем push таблиц
-		focused = false // убираем фокус на инпуте для поиска
 		
-		dataTable(config, data) // Делаем таблицу
- 	}
+		drawTable(config, data) // Делаем таблицу
+	}
 }
-
-function dataTable(config, data) {
+function drawTable(config, data){
 
 	// СОЗДАЕМ ТАБЛИЦУ
 	var tableName = config.parent
-	var table = document.getElementById(tableName.slice(1)) // наш див
+	var tableDiv = document.querySelector(tableName) // наш див
+	var table = tableDiv.querySelector('.jstable')
 
 	var index = 0 // для id (будет увеличиваться с каждой строкой)
 
-	var tableElem = document.createElement('table'), // таблица
-	    thead = document.createElement('thead'), 
+	var thead = document.createElement('thead'), 
 	    tbody = document.createElement('tbody'),
 	    trHead = document.createElement('tr') // tr для шапки таблицы (семантическое значение)
-
-	// ДОБАВЛЯЕМ INPUT ДЛЯ ПОИСКА
-	if ( config.search == true || config.search?.fields || config.search?.filters ){
-		var searchInput = document.createElement('input')
-		searchInput.type = 'text'
-		// Заполняем массив введенных данных ''   
-		if ( inputValue[tableIndex] === undefined ){
-			inputValue[tableIndex] = ''
-		}
-		searchInput.value = inputValue[tableIndex]
-		searchInput.className = 'table-search'
-		table.appendChild(searchInput)
-
-		if ( focused == true ){
-			searchInput.focus()
-		}
-
-	    dataSearch(searchInput, config, data, table)
-	}
 
 	for ( var col of config.columns ){ // тут берем объекты в config.columns
     	var th
@@ -350,10 +365,8 @@ function dataTable(config, data) {
 				if ( toSort[tableIndex] == 3 ){
 					i.className = 'fas fa-sort'
 				}
-			}	
-
-			renderTable(btn, config, data, col, table)
-
+			}
+			sortTable(btn, config, data, col, table)
     	}
     	if ( col.type == 'number' ){
     		th.className = 'align-right jstd-and-th'
@@ -372,9 +385,9 @@ function dataTable(config, data) {
     		td = document.createElement('td')
     		td.className = 'jstd-and-th' // CSS 
 
-    		var value = config.columns[configObj].value // наш value в config'e
-    		td.innerText = data[dataObj][value] // через value ↑ находим свойство в data и берем ее значение
-    		if ( value == '_index' ){ 
+    		var configValue = config.columns[configObj].value // наш value в config'e
+    		td.innerText = data[dataObj][configValue] // через value ↑ находим свойство в data и берем ее значение
+    		if ( configValue == '_index' ){ 
     			td.innerText = index
     			td.className = 'id jstd-and-th' // CSS 
     		}
@@ -383,32 +396,89 @@ function dataTable(config, data) {
     		if ( type == 'number' ){
     			td.className = 'align-right jstd-and-th' // CSS 
     		}
+    		// Для аватаров
+    		if ( type == 'image' ){
+    			td.innerText = ''
+    			var image
+    			image = document.createElement('img')
+    			image.src = data[dataObj][configValue]
+    			td.appendChild(image)
+    		}
+    		// берем свойства у каждого юзера
+    		var directDataProperties = Object.keys(data[dataObj])
 
+    		if ( typeof configValue === 'function' ){
+ 				
+				data[dataObj][configValue] = data[dataObj][directDataProperties[configObj]] // для правильной сортировки
+    		
+    			td.innerText = config.columns[configObj].value(data[dataObj])
+    		}
     		trBody.appendChild(td) // <td> => <tr>
     	}
     	tbody.appendChild(trBody) // <td> => <tbody>
     }
 
     // CSS
-    tableElem.className = 'jstable'
     thead.className = 'jsthead'
     tbody.className = 'jstbody'
 
     // КОНСТРУИРУЕМ ТАБЛИЦУ
 	thead.appendChild(trHead)    // <tr> => <thead>
-	tableElem.appendChild(thead) // <thead> => <table>
-	tableElem.appendChild(tbody) // <tbody> => <table>
-	table.appendChild(tableElem) // <table> => див
+	table.appendChild(thead) // <thead> => <table>
+	table.appendChild(tbody) // <tbody> => <table>
 
-	// ДЕЛАЕМ МАССИВ С ДАННЫМИ ПРО КАЖДУЮ ТАБЛИЦУ
-	if ( toStopPush == true ){
-		tableArray.push(table)
+}
+async function getApi(url){
+	var request = await fetch(url)
+	var response = await request.json()
 
-		toSort[tableIteration] = 0
-		defaultArrays[tableIteration] = [ ...data ]
-		onSearch[tableIteration] = false
+	return response
+}
+async function dataTable(config, data) {
+	
+	if ( data === undefined ){
+		await getApi(config.apiUrl)
+			.then( apiData => data = apiData )
 	}
+
+	var tableName = config.parent
+	var tableDiv = document.querySelector(tableName) // наш див
+
+	var table = document.createElement('table') // таблица
+	table.className = 'jstable'
+
+	// ДОБАВЛЯЕМ INPUT ДЛЯ ПОИСКА
+	if ( config.search == true || config.search?.fields || config.search?.filters ){
+		var inputBox = document.createElement('div')
+		var nothingFound = document.createElement('span') // Для текста ничего не найдено
+		var searchInput = document.createElement('input')
+
+		searchInput.type = 'text'
+		searchInput.placeholder = 'Search...'
+		searchInput.className = 'table-search'
+
+		inputBox.appendChild(searchInput)
+		inputBox.appendChild(nothingFound)
+		tableDiv.appendChild(inputBox)
+
+		searchInput.oninput = () => {
+			dataSearch(searchInput, config, data, table)
+		} 
+	}
+
+	tableDiv.appendChild(table) // <table> => див
+
+	// ДЕЛАЕМ МАССИВЫ С ДАННЫМИ ПРО КАЖДУЮ ТАБЛИЦУ
+	tableArray.push(tableDiv)
+
+	toSort[tableIteration] = 0
+	defaultArrays[tableIteration] = [ ...data ]
+	onSearch[tableIteration] = false
+
+	// РИСУЕМ ТАБЛИЦУ
+	drawTable(config, data, table)
+
 	tableIteration++
 }
-dataTable(config_1, users)
+dataTable(config_1)
 dataTable(config_2, workers)

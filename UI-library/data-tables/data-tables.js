@@ -22,7 +22,8 @@ const config_1 = { // пишу через _ потому что уже есть 
   	  v => toKeyboardLayout(v, 'en').toLowerCase(),
   	  v => toKeyboardLayout(v, 'en').toUpperCase()
   	]
-  }
+  },
+  actionButtons: true // добавляет колонку действия
 };
 
 const users = [
@@ -40,12 +41,16 @@ const users = [
 const config_2 = {
 	parent: '#myTable',
 	columns: [
-		{title: 'Num', value: '_index'},
-		{title: 'Name', value: 'name', type: 'number'},
-		{title: 'Experience', value: 'exp', sortable: true}
+		{title: '№', value: '_index'},
+	    {title: 'Дата регистрации', value: (user) => calculateData(user.createdAt, 'registration'), sortable: true},
+	    {title: 'Имя', value: 'name', sortable: true},
+	    {title: 'Аватар', value: 'avatar', type: 'image'},
+	    {title: 'Фамилия', value: 'surname', sortable: true},
+	    {title: 'Возраст', value: (user) => calculateData(user.birthday, 'age'), sortable: true, type: 'number'}
 	],
+	apiUrl: 'https://5f4540773fb92f00167547c9.mockapi.io/users',
 	search: {
-		fields: ['name', 'exp'],
+		fields: ['name', 'surname'],
 		filters: [
 			v => v.toLowerCase(),
   	 		v => v.toUpperCase(),
@@ -56,7 +61,8 @@ const config_2 = {
 		  	v => toKeyboardLayout(v, 'en').toLowerCase(),
 		  	v => toKeyboardLayout(v, 'en').toUpperCase()
 		]
-	}
+	},
+	actionButtons: true
 }
 const workers = [
 	{i: 123, name: 'Grisha', exp: 'middle'},
@@ -184,7 +190,7 @@ function toKeyboardLayout(str, lang) {
 	4. tableToChange - какую таблицу очищать
 */
 
-function dataSearch(input, config, data, tableToChange){
+function dataSearch(config, data, tableToChange){
 
 	var tableBox = tableToChange.parentNode // наш див
 	var input = tableBox.querySelector('.table-search')
@@ -258,11 +264,12 @@ function dataSearch(input, config, data, tableToChange){
 	}
 
 	// СОХРАНЯЕМ СОРТИРОВКУ
-	saveSort(sortedColumn, data, onSearch[tableIndex])
+	saveSort(sortedColumn, data)
 	drawTable(config, data)
 }
 
-function saveSort(column, data, searching){
+function saveSort(column, data){
+
 	if ( toSort[tableIndex] == 1 ){
 		data.sort( (a, b) => b[column.value] > a[column.value] ? 1 : -1  )
 	}
@@ -272,7 +279,7 @@ function saveSort(column, data, searching){
 	if ( toSort[tableIndex] == 3 ){
 			
 		toSort[tableIndex] = 0
-		if ( searching == false ){ // если мы ничего не нашли 
+		if ( onSearch[tableIndex] == false ){ // если мы ничего не нашли или не искали
 			data = [ ...defaultArrays[tableIndex] ]
 		}
 		else { // если нашли
@@ -288,9 +295,8 @@ function saveSort(column, data, searching){
 	4. tableToChange - какую таблицу очищать
 */
 
-function sortTable(btn, config, data, column, tableToChange) {
-	btn.onclick = () => {
-		
+function sortTable(config, data, column, tableToChange) {
+	
 		var tableBox = tableToChange.parentNode // наш див
 		tableToChange.innerHTML = '' // убираем таблицу
 
@@ -307,25 +313,24 @@ function sortTable(btn, config, data, column, tableToChange) {
 		toSort[tableIndex]++
 
 		if ( toSort[tableIndex] == 1 ){
-			data.sort( (a, b) => b[column.value] > a[column.value] ? 1 : -1 )
+			data.sort( (a, b) => b[column.value] > a[column.value] ? 1 : -1  )
 		}
 		if ( toSort[tableIndex] == 2 ){
-			data.sort( (a, b) => b[column.value] < a[column.value] ? 1 : -1 )
+			data.sort( (a, b) => b[column.value] < a[column.value] ? 1 : -1  )
 		}
 		if ( toSort[tableIndex] == 3 ){
 				
 			toSort[tableIndex] = 0
-			if ( onSearch[tableIndex] == false ){ // если мы ничего не нашли 
+			if ( onSearch[tableIndex] == false ){ // если мы ничего не нашли или не искали
 				data = [ ...defaultArrays[tableIndex] ]
 			}
 			else { // если нашли
 				data = [ ...defaultSeacrhedData[tableIndex] ]
 			}
 		}
-		
 		drawTable(config, data) // Делаем таблицу
 	}
-}
+
 function drawTable(config, data){
 
 	// СОЗДАЕМ ТАБЛИЦУ
@@ -339,17 +344,17 @@ function drawTable(config, data){
 	    tbody = document.createElement('tbody'),
 	    trHead = document.createElement('tr') // tr для шапки таблицы (семантическое значение)
 
-	for ( var col of config.columns ){ // тут берем объекты в config.columns
+	for ( let col of config.columns ){ // тут берем объекты в config.columns
     	var th
     	th = document.createElement('th')
-    	th.className = 'jstd-and-th' // CSS 
+    	th.className = 'jstd-and-th'
     	th.innerText = col.title
     	
     	// Создаем кнопки сортировки
     	if ( col.sortable == true ){
-			btn = document.createElement('button')
+			let btn = document.createElement('button')
 			btn.className = 'sort-btn'
-			i = document.createElement('i')
+			let i = document.createElement('i')
 			i.className = 'fas fa-sort'
 			btn.appendChild(i)
 			th.appendChild(btn)
@@ -366,13 +371,23 @@ function drawTable(config, data){
 					i.className = 'fas fa-sort'
 				}
 			}
-			sortTable(btn, config, data, col, table)
+			btn.onclick = () => {
+				sortTable(config, data, col, table)
+			}
     	}
     	if ( col.type == 'number' ){
     		th.className = 'align-right jstd-and-th'
     	}
 
     	trHead.appendChild(th) // <th> => <tr>
+    }
+
+    // Действия
+    if ( config.actionButtons == true){
+    	var th = document.createElement('th')
+	    th.className = 'jstd-and-th'
+	    th.innerText = 'Действия'
+	    trHead.appendChild(th)
     }
 
     for ( var dataObj = 0; dataObj < data.length; dataObj++ ){
@@ -383,18 +398,18 @@ function drawTable(config, data){
     	for ( var configObj = 0; configObj < config.columns.length; configObj++ ){
     		var td
     		td = document.createElement('td')
-    		td.className = 'jstd-and-th' // CSS 
+    		td.className = 'jstd-and-th'
 
     		var configValue = config.columns[configObj].value // наш value в config'e
     		td.innerText = data[dataObj][configValue] // через value ↑ находим свойство в data и берем ее значение
     		if ( configValue == '_index' ){ 
     			td.innerText = index
-    			td.className = 'id jstd-and-th' // CSS 
+    			td.className = 'id jstd-and-th'
     		}
 
     		var type = config.columns[configObj].type // берем type у значения свойства
     		if ( type == 'number' ){
-    			td.className = 'align-right jstd-and-th' // CSS 
+    			td.className = 'align-right jstd-and-th'
     		}
     		// Для аватаров
     		if ( type == 'image' ){
@@ -410,11 +425,31 @@ function drawTable(config, data){
     		if ( typeof configValue === 'function' ){
  				
 				data[dataObj][configValue] = data[dataObj][directDataProperties[configObj]] // для правильной сортировки
-    		
     			td.innerText = config.columns[configObj].value(data[dataObj])
     		}
     		trBody.appendChild(td) // <td> => <tr>
     	}
+    	
+    	// Действия
+    	if ( config.actionButtons == true ){
+    		let directId = data[dataObj].id
+
+	    	let td = document.createElement('td')
+
+	    	let deleteButton = document.createElement('button') // Удалить
+	    	deleteButton.innerText = 'Удалить'
+		    deleteButton.className = 'action-button del-btn'
+
+		    deleteButton.onclick = () => {
+		    	deleteData(directId, config.apiUrl, config, data, table)
+		    }
+		    
+		    td.className = 'jstd-and-th align-right'
+
+	    	td.appendChild(deleteButton)
+			trBody.appendChild(td)
+    	}
+
     	tbody.appendChild(trBody) // <td> => <tbody>
     }
 
@@ -427,6 +462,26 @@ function drawTable(config, data){
 	table.appendChild(thead) // <thead> => <table>
 	table.appendChild(tbody) // <tbody> => <table>
 
+}
+async function deleteData(id, url, config, data, tableToChange){
+
+		tableToChange.innerHTML = ''
+		var tableBox = tableToChange.parentNode // наш див
+
+		// СОЗДАЕМ ИНДЕКС ДЛЯ РАБОТЫ С ОПРЕДЕЛЕННЫМИ ДАННЫМИ ОПРЕДЕЛЕННОЙ ТАБЛИЦЫ
+		tableIndex = tableArray.indexOf(tableBox)
+
+		await fetch(url + '/' + id, {
+			method: 'delete'
+		})
+		await getApi(url)
+			.then( newData => data = newData )
+
+		defaultArrays[tableIndex] = [ ...data ]
+
+		// чтобы сохраняло и сортировку, и поиск при удалении
+		// тут есть и сохранение сортировки и рисование таблички. Удобно получилось
+		dataSearch(config, data, tableToChange)
 }
 async function getApi(url){
 	var request = await fetch(url)
@@ -453,6 +508,8 @@ async function dataTable(config, data) {
 		var nothingFound = document.createElement('span') // Для текста ничего не найдено
 		var searchInput = document.createElement('input')
 
+		inputBox.className = 'input-box'
+
 		searchInput.type = 'text'
 		searchInput.placeholder = 'Search...'
 		searchInput.className = 'table-search'
@@ -462,7 +519,7 @@ async function dataTable(config, data) {
 		tableDiv.appendChild(inputBox)
 
 		searchInput.oninput = () => {
-			dataSearch(searchInput, config, data, table)
+			dataSearch(config, data, table)
 		} 
 	}
 
@@ -481,4 +538,4 @@ async function dataTable(config, data) {
 	tableIteration++
 }
 dataTable(config_1)
-dataTable(config_2, workers)
+dataTable(config_2)

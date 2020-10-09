@@ -42,11 +42,11 @@ const config_2 = {
 	parent: '#myTable',
 	columns: [
 		{title: '№', value: '_index'},
-	    {title: 'Дата регистрации', value: (user) => calculateData(user.createdAt, 'registration'), sortable: true},
-	    {title: 'Имя', value: 'name', sortable: true},
-	    {title: 'Аватар', value: 'avatar', type: 'avatar'},
+	    {title: 'Дата регистрации', extraValue: 'createdAt', value: (user) => calculateData(user.createdAt, 'registration'), sortable: true},
+	    {title: 'Имя', value: 'name', sortable: true, editable: true},
+	    {title: 'Аватар', value: 'avatar', type: 'avatar', editable: true},
 	    {title: 'Фамилия', value: 'surname', sortable: true},
-	    {title: 'Возраст', value: (user) => calculateData(user.birthday, 'age'), sortable: true, type: 'number'}
+	    {title: 'Возраст', extraValue: 'birthday', value: (user) => calculateData(user.birthday, 'age'), sortable: true, type: 'number', editable: true}
 	],
 	apiUrl: 'https://5f4540773fb92f00167547c9.mockapi.io/users',
 	search: {
@@ -551,7 +551,7 @@ function makeUser(inputs, config, data, tableToChange){
 
 	// делаем объект с пустыми свойствами
 	for ( col of config.columns ){
-		if (typeof col.value == 'function'){
+		if ( typeof col.value == 'function' ){
 			newUser[col.extraValue] = ''
 		}else{
 			newUser[col.value] = ''
@@ -574,6 +574,8 @@ function makeUser(inputs, config, data, tableToChange){
 			}
 		}
 	}
+
+	delete newUser['_index']
 	putData(newUser, config.apiUrl, config, data, tableToChange)
 	closeModal(modals)
 }

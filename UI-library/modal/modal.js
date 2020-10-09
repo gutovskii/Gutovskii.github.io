@@ -1,7 +1,7 @@
 function openModal(id){
 	var data = id.dataset.target;
 	var dataModal = document.getElementById(data);
-	dataModal.style.display = "block";
+	dataModal.style.visibility = "visible";
 	document.body.classList.add('body-hidden');
 }
 
@@ -15,7 +15,7 @@ for (var item of modalHeader){
 
 function closed(){
 	for (var modal of modals){
-		modal.style.display = "none";
+		modal.style.visibility = "hidden";
 		document.body.classList.remove('body-hidden');
 	}
 } 

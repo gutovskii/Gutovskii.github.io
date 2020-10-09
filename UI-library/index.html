@@ -63,7 +63,7 @@
 		<div class="modal-bg"></div>
 		<div class="modal-content">
 			<div class="modal-header">
-				<h1>Lorem ipsum dolor</h1>
+				<h2>Lorem ipsum dolor</h2>
 			</div>
 			<div class="modal-main">
 				<div class="modal-text">
@@ -80,15 +80,15 @@
 			</div>
 			<div class="modal-footer">
 				<div class="modal-btnbox">
-					<a href="#" class="btn" onclick="closed()">Подтвердить</a>
-					<a href="#" class="btn" onclick="closed()">Отменить</a>
+					<button class="modal-btn" onclick="closed()">Подтвердить</button>
+					<button class="modal-btn" onclick="closed()">Отменить</button>
 				</div>
 			</div>
 		</div>
 	</div>		
 
 	<button class="modal-trigger button" data-target="send" onclick="openModal(this)">Открыть модалку</button>
-
+    
     <!-- Бургер //////////////////////////////////////////// -->
 	<nav>
 	    <div class="logo">   	
@@ -133,6 +133,13 @@
 	<div id="usersTable"></div>
 	<div id="myTable"></div>
 
+	<!-- Если в value в конфиге будет функция, то нужно добавить extraValue
+		 для возможности использовать свойство которое есть в api
+		 (например extraValue: "createdAt", value: function(...){...} ) -->
+
+	<!-- Добавлен moment.js для коректного использования даты -->
+
+	<script type="text/javascript" src="moment/moment.min.js"></script>
 	<script type="text/javascript" src="data-tables/data-tables.js"></script> <!-- js таблица -->
 	<script type="text/javascript" src="carousel/carousel.js"></script> <!-- js карусель -->
 	<script type="text/javascript" src="burger/burger.js"></script> <!-- js бургер -->

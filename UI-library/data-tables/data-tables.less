@@ -1,6 +1,4 @@
-.align-right{
-	text-align: right;
-}
+
 .jstable{
 	margin: 5px;
 	padding: 5px;
@@ -17,9 +15,55 @@
 .jstd-and-th{
 	padding: 5px;
 }
+.avatar-box img{
+	height: 128px;
+	width: 128px;
+}
+.del-btn{
+	background-color: #F92468;
+}
+.add-btn{
+	background-color: #A6E22A;
+	margin-right: 5px;
+}
+.action-button{
+	cursor: pointer;
+}
+.input-box{
+	display: flex;
+	align-items: center;
+}
+.add-input{
+	width: 250px;
+	margin: 10px;
+	padding: 5px;
+	border: 1px solid #000;
+	background: #E4E4E4;
+	border-radius: 5px;
+
+	transition: 0.05s background linear;
+}
+.add-input:focus{
+	background: #DEDEDE;
+}
 .table-search{
+	width: 300px;
+	height: 30px;
+	font-size: 16px;
+
+	border-radius: 8px;
+	outline: none;
+	border: none;
+	background-color: #E4E4E4;
+
 	margin-left: 5px;
 	margin-right: 5px;
+	padding: 10px;
+
+	transition: background .05s linear;
+}
+.table-search:focus{
+	background-color: #D5D5D5; 
 }
 .sort-btn{
 	margin-left: 4px;

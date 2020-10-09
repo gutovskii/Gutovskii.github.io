@@ -3,11 +3,11 @@ const config_1 = { // пишу через _ потому что уже есть 
   parent: '#usersTable',
   columns: [
     {title: '№', value: '_index'},
-    {title: 'Дата регистрации', value: (user) => calculateData(user.createdAt, 'registration'), sortable: true},
+    {title: 'Дата регистрации', extraValue: 'createdAt', value: (user) => calculateData(user.createdAt, 'registration'), sortable: true, editable: true},
     {title: 'Имя', value: 'name', sortable: true},
-    {title: 'Аватар', value: 'avatar', type: 'image'},
-    {title: 'Фамилия', value: 'surname', sortable: true},
-    {title: 'Возраст', value: (user) => calculateData(user.birthday, 'age'), sortable: true, type: 'number'}
+    {title: 'Аватар', value: 'avatar', type: 'avatar', editable: true},
+    {title: 'Фамилия', value: 'surname', sortable: true, editable: true},
+    {title: 'Возраст', extraValue: 'birthday', value: (user) => calculateData(user.birthday, 'age'), sortable: true, type: 'number', editable: true}
   ],
   apiUrl: 'https://5f34ff0d9124200016e1941b.mockapi.io/api/v1/users',
   search: {
@@ -25,7 +25,7 @@ const config_1 = { // пишу через _ потому что уже есть 
   },
   actionButtons: true // добавляет колонку действия
 };
-
+ 
 const users = [
   {id: 30050, name: 'петя', surname: 'Петров', age: 12},
   {id: 30051, name: 'Вася', surname: 'Васечкин', age: 25},
@@ -44,7 +44,7 @@ const config_2 = {
 		{title: '№', value: '_index'},
 	    {title: 'Дата регистрации', value: (user) => calculateData(user.createdAt, 'registration'), sortable: true},
 	    {title: 'Имя', value: 'name', sortable: true},
-	    {title: 'Аватар', value: 'avatar', type: 'image'},
+	    {title: 'Аватар', value: 'avatar', type: 'avatar'},
 	    {title: 'Фамилия', value: 'surname', sortable: true},
 	    {title: 'Возраст', value: (user) => calculateData(user.birthday, 'age'), sortable: true, type: 'number'}
 	],
@@ -100,7 +100,7 @@ var defaultArrays = [], // Для хранения дефолтных масси
    	onSearch = [], // Для понятия нашло ли элементы
    	tableArray = [] // Хранение таблиц
 
-var tableIteration = 0, // индекс для записи данных определенной таблицы
+let tableIteration = 0, // индекс для записи данных определенной таблицы
     tableIndex // Индекс для работы с определенной таблицы
 
 // ДЛЯ renderTable
@@ -119,7 +119,7 @@ function calculateData(date, toCalculate){
 		if ( Math.floor(age) >= 1 ){
 			if ( lastNumeral == 1 ) ymw = 'год'
 			if ( lastNumeral > 1 && lastNumeral < 5 ) ymw = 'года'
-			if ( lastNumeral >= 5 ) ymw = 'лет'
+			if ( lastNumeral >= 5 || lastNumeral == 0 ) ymw = 'лет'
 		}
 		if ( Math.floor(age) === 0 ){
 			age *= 12
@@ -127,21 +127,31 @@ function calculateData(date, toCalculate){
 			if ( lastNumeral == 1 ) ymw = 'месяц'
 			if ( lastNumeral > 1 && lastNumeral < 5 ) ymw = 'месяца'
 			if ( lastNumeral >= 5 || (Math.floor(age) >= 10 && Math.floor(age) <= 20) ) ymw = 'месяцев'
-			if ( age < 1 ) {
+		    
+			if ( Math.floor(age) === 0 ) {
 				age *= 4
 				lastNumeral = Math.floor(age) % 10
 				if ( lastNumeral == 1 ) ymw = 'неделя'
 				if ( lastNumeral > 1 ) ymw = 'недели'
 			}
 		}
-		return Math.floor(age) + ' ' + ymw
+		var result = Math.floor(age) + ' ' + ymw
+		if ( result == 'NaN undefined'){
+			return null
+		}else{
+			return result
+		}
 	}
 	if ( toCalculate == 'registration' ){
 		var days = ('0' + setDate.getDate()).slice(-2),
 			month = ('0' + (setDate.getMonth() + 1)).slice(-2),
 			year = setDate.getFullYear()
-
-		return days + '.' + month + '.' + year
+		var result = days + '.' + month + '.' + year
+		if ( result == 'aN.aN.NaN' ){
+			return null
+		}else{
+			return result
+		}
 	}
 }
 function toKeyboardLayout(str, lang) {
@@ -352,12 +362,12 @@ function drawTable(config, data){
     	
     	// Создаем кнопки сортировки
     	if ( col.sortable == true ){
-			let btn = document.createElement('button')
-			btn.className = 'sort-btn'
+			let sortBtn = document.createElement('button')
+			sortBtn.className = 'sort-btn'
 			let i = document.createElement('i')
 			i.className = 'fas fa-sort'
-			btn.appendChild(i)
-			th.appendChild(btn)
+			sortBtn.appendChild(i)
+			th.appendChild(sortBtn)
 			
 			// МЕНЯЕМ КНОПКУ
 			if ( sortedColumn == col ){
@@ -371,7 +381,7 @@ function drawTable(config, data){
 					i.className = 'fas fa-sort'
 				}
 			}
-			btn.onclick = () => {
+			sortBtn.onclick = () => {
 				sortTable(config, data, col, table)
 			}
     	}
@@ -409,22 +419,25 @@ function drawTable(config, data){
 
     		var type = config.columns[configObj].type // берем type у значения свойства
     		if ( type == 'number' ){
-    			td.className = 'align-right jstd-and-th'
+    			td.align = 'right'
     		}
     		// Для аватаров
-    		if ( type == 'image' ){
+    		if ( type == 'avatar' ){
     			td.innerText = ''
-    			var image
-    			image = document.createElement('img')
-    			image.src = data[dataObj][configValue]
-    			td.appendChild(image)
+    			var avatar
+    			var avaDiv
+    			avaDiv = document.createElement('div')
+    			avaDiv.className = 'avatar-box'
+    			avatar = document.createElement('img')
+    			avatar.src = data[dataObj][configValue]
+    			avaDiv.appendChild(avatar)
+    			td.appendChild(avaDiv)
     		}
     		// берем свойства у каждого юзера
     		var directDataProperties = Object.keys(data[dataObj])
-
     		if ( typeof configValue === 'function' ){
- 				
 				data[dataObj][configValue] = data[dataObj][directDataProperties[configObj]] // для правильной сортировки
+				
     			td.innerText = config.columns[configObj].value(data[dataObj])
     		}
     		trBody.appendChild(td) // <td> => <tr>
@@ -444,7 +457,8 @@ function drawTable(config, data){
 		    	deleteData(directId, config.apiUrl, config, data, table)
 		    }
 		    
-		    td.className = 'jstd-and-th align-right'
+		    td.align = 'right'
+		    td.className = 'jstd-and-th'
 
 	    	td.appendChild(deleteButton)
 			trBody.appendChild(td)
@@ -463,12 +477,136 @@ function drawTable(config, data){
 	table.appendChild(tbody) // <tbody> => <table>
 
 }
+function makeModal(idParam, config, data, tableToChange){
+	var bodyField = document.body
+
+	// Делаем модалку
+	var modalBody = document.createElement('div')
+	var modalBg = document.createElement('div')
+	var modalContent = document.createElement('div')
+	var modalHeader = document.createElement('div')
+	var modalMain = document.createElement('div')
+	var modalFooter = document.createElement('div')
+	var modalInputBox = document.createElement('div')
+	var modalBtnBox = document.createElement('div')
+
+	modalBody.id = `table${idParam}`
+	modalBody.className = 'modal'
+	bodyField.prepend(modalBody)
+
+	modalBg.className = 'modal-bg'
+	modalContent.className = 'modal-content'
+	modalBody.appendChild(modalBg)
+	modalBody.appendChild(modalContent)
+
+	modalHeader.className = 'modal-header'
+	modalMain.className = 'modal-main'
+	modalFooter.className = 'modal-footer'
+	modalContent.appendChild(modalHeader)
+	modalContent.appendChild(modalMain)
+	modalContent.appendChild(modalFooter)
+
+	modalInputBox.className = 'modal-inputbox'
+	modalBtnBox.className = 'modal-btnbox'
+	modalMain.appendChild(modalInputBox)
+	modalFooter.appendChild(modalBtnBox)
+
+	var modalHeadline = document.createElement('h2')
+	modalHeadline.innerText = 'Добавить пользователя'
+	modalHeader.appendChild(modalHeadline)
+
+	// add inputs
+	for ( configObj in config.columns ){
+		if ( config.columns[configObj].editable === true ){
+			
+			var configValue = config.columns[configObj].title
+			
+			var addInput = document.createElement('input')
+			addInput.placeholder = configValue
+			addInput.dataset.val = config.columns[configObj].value 
+			
+			if ( typeof config.columns[configObj].value == 'function' ){
+				addInput.dataset.val = config.columns[configObj].extraValue 
+			}
+			addInput.className = 'add-input'
+			modalInputBox.appendChild(addInput)
+		}
+	}
+
+	var addInputs = modalInputBox.querySelectorAll('.add-input')
+	var acceptBtn = document.createElement('button')
+	acceptBtn.innerText = 'Добавить'
+	acceptBtn.className = 'modal-btn'
+	acceptBtn.onclick = () => {
+		makeUser(addInputs, config, data, tableToChange)
+	}
+	modalBtnBox.appendChild(acceptBtn)
+}
+function makeUser(inputs, config, data, tableToChange){
+	var modals = document.querySelectorAll('.modal')
+
+	let newUser = {}
+	let isUnknowUserData = newUser[col.value] === undefined
+	let unknowUserImg = 'https://www.gravatar.com/avatar/ea41702be6bc8aaab3f62a20184b0cc8?size=200&d=https%3A%2F%2Fsalesforce-developer.ru%2Fwp-content%2Fuploads%2Favatars%2Fno-avatar.jpg'
+
+	// делаем объект с пустыми свойствами
+	for ( col of config.columns ){
+		if (typeof col.value == 'function'){
+			newUser[col.extraValue] = ''
+		}else{
+			newUser[col.value] = ''
+		}
+		if ( isUnknowUserData && col.type == 'avatar' ){
+			newUser[col.value] = unknowUserImg
+		}
+	}
+	// заполняем объект
+	for ( input of inputs ){
+		newUser[input.dataset.val] = input.value
+		// делаем время в джсон формате
+		if ( moment(input.value, 'DD.MM.YYYY').toISOString() !== null ){
+			newUser[input.dataset.val] = moment(input.value, 'DD.MM.YYYY').toISOString()
+		}
+		for (col of config.columns){
+			// если картинки нет или ничего не заполняли
+			if ( col.type == 'avatar' && newUser[col.value] == '' ){
+				newUser[input.dataset.val] = unknowUserImg
+			}
+		}
+	}
+	putData(newUser, config.apiUrl, config, data, tableToChange)
+	closeModal(modals)
+}
+function closeModal(modalList){
+	for (var modal of modalList){
+		modal.style.visibility = "hidden";
+		document.body.classList.remove('body-hidden');
+	}
+}
+async function putData(user, url, config, data, tableToChange){
+	
+	var tableBox = tableToChange.parentNode
+	tableIndex = tableArray.indexOf(tableBox)
+
+	await fetch(url, {
+		method: 'post',
+		body: JSON.stringify(user),
+		headers:{
+			'Content-type': 'application/json'
+		}
+	})
+	await getApi(url)
+		.then( newData => data = newData )
+
+	defaultArrays[tableIndex] = [ ...data ]
+	// очищаем таблицу
+	tableToChange.innerText = ''
+
+	dataSearch(config, data, tableToChange)
+}
 async function deleteData(id, url, config, data, tableToChange){
 
-		tableToChange.innerHTML = ''
 		var tableBox = tableToChange.parentNode // наш див
-
-		// СОЗДАЕМ ИНДЕКС ДЛЯ РАБОТЫ С ОПРЕДЕЛЕННЫМИ ДАННЫМИ ОПРЕДЕЛЕННОЙ ТАБЛИЦЫ
 		tableIndex = tableArray.indexOf(tableBox)
 
 		await fetch(url + '/' + id, {
@@ -478,6 +616,8 @@ async function deleteData(id, url, config, data, tableToChange){
 			.then( newData => data = newData )
 
 		defaultArrays[tableIndex] = [ ...data ]
+		// очищаем таблицу
+		tableToChange.innerHTML = ''
 
 		// чтобы сохраняло и сортировку, и поиск при удалении
 		// тут есть и сохранение сортировки и рисование таблички. Удобно получилось
@@ -502,9 +642,11 @@ async function dataTable(config, data) {
 	var table = document.createElement('table') // таблица
 	table.className = 'jstable'
 
-	// ДОБАВЛЯЕМ INPUT ДЛЯ ПОИСКА
+	// ДОБАВЛЯЕМ ЭЛЕМЕНТЫ В input-box ДЛЯ ПОИСКА
 	if ( config.search == true || config.search?.fields || config.search?.filters ){
+
 		var inputBox = document.createElement('div')
+		
 		var nothingFound = document.createElement('span') // Для текста ничего не найдено
 		var searchInput = document.createElement('input')
 
@@ -513,17 +655,50 @@ async function dataTable(config, data) {
 		searchInput.type = 'text'
 		searchInput.placeholder = 'Search...'
 		searchInput.className = 'table-search'
+		inputBox.appendChild(searchInput) // записую здесь для последовательновсти записи элементов
 
-		inputBox.appendChild(searchInput)
+		for ( col of config.columns ){
+			if ( col.editable === true ){
+
+				makeModal(tableIteration, config, data, table) // делаем модальное окно
+
+				var addButton = document.createElement('button') // Кнопка добавить
+				addButton.innerText = 'Добавить'
+				addButton.className = 'action-button add-btn'
+				addButton.dataset.target = `table${tableIteration}`
+				addButton.onclick = () => {
+					openModal(addButton)
+				}
+
+				inputBox.appendChild(addButton)
+				break
+			}
+		}
+
 		inputBox.appendChild(nothingFound)
 		tableDiv.appendChild(inputBox)
 
 		searchInput.oninput = () => {
 			dataSearch(config, data, table)
-		} 
+		}
 	}
 
 	tableDiv.appendChild(table) // <table> => див
+
+	var modals = document.querySelectorAll('.modal');
+	var modalHeader = document.querySelector('.modal-header');
+	var modalBg = document.querySelector('.modal-bg')
+	var closer = document.createElement('div');
+
+	closer.className = 'closer';
+	closer.onclick = () => {
+		closeModal(modals)
+	}
+	modalBg.onclick = () => {
+		closeModal(modals)
+	}
+	
+	modalHeader.appendChild(closer);
 
 	// ДЕЛАЕМ МАССИВЫ С ДАННЫМИ ПРО КАЖДУЮ ТАБЛИЦУ
 	tableArray.push(tableDiv)

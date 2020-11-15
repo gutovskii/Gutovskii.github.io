@@ -1,13 +1,13 @@
 //----------------------------------------------------
-const config_1 = { // пишу через _ потому что уже есть такой массив
+const config_1 = {
   parent: '#usersTable',
   columns: [
     {title: '№', value: '_index'},
-    {title: 'Дата регистрации', extraValue: 'createdAt', value: (user) => calculateData(user.createdAt, 'registration'), sortable: true, editable: true},
-    {title: 'Имя', value: 'name', sortable: true},
+    {title: 'Дата регистрации', extraValue: 'createdAt', value: (user) => calculateData(user.createdAt, 'registration'), tojson: true, sortable: true, editable: true},
+    {title: 'Имя', value: 'name', sortable: true, editable: true},
     {title: 'Аватар', value: 'avatar', type: 'avatar', editable: true},
     {title: 'Фамилия', value: 'surname', sortable: true, editable: true},
-    {title: 'Возраст', extraValue: 'birthday', value: (user) => calculateData(user.birthday, 'age'), sortable: true, type: 'number', editable: true}
+    {title: 'Возраст', extraValue: 'birthday', value: (user) => calculateData(user.birthday, 'age'), tojson: true, sortable: true, type: 'number', editable: true}
   ],
   apiUrl: 'https://5f34ff0d9124200016e1941b.mockapi.io/api/v1/users',
   search: {
@@ -72,7 +72,7 @@ const workers = [
 	{id: 127, name: 'Pasha', exp: 'senior'}
 ]
 //----------------------------------------------------
-var engLetters = {
+let engLetters = {
 	   sml: [ "`","q","w","e","r","t","y","u","i",
 	     "o","p","[","]","a","s","d","f",
 	     "g","h","j","k","l",";","'","z",
@@ -84,7 +84,7 @@ var engLetters = {
 	     'X','C','V','B','N','M','<','>' ]
 }
 
-var rusLetters = {
+let rusLetters = {
 	   sml: [ "ё","й","ц","у","к","е","н","г","ш",
 	     "щ","з","х","ъ","ф","ы","в","а",
 	     "п","р","о","л","д","ж","э","я",
@@ -95,7 +95,7 @@ var rusLetters = {
 	     'П','Р','О','Л','Д','Ж','Э','Я',
 	     'Ч','С','М','И','Т','Ь','Б','Ю' ]
 }
-var defaultArrays = [], // Для хранения дефолтных массивов
+let defaultArrays = [], // Для хранения дефолтных массивов
     defaultSeacrhedData = [], // Дефолтный массив для найденных элементов
    	onSearch = [], // Для понятия нашло ли элементы
    	tableArray = [] // Хранение таблиц
@@ -104,17 +104,17 @@ let tableIteration = 0, // индекс для записи данных опр�
     tableIndex // Индекс для работы с определенной таблицы
 
 // ДЛЯ renderTable
-var toSort = [], // Для сортирвки каждой таблицы
+let toSort = [], // Для сортирвки каждой таблицы
     sortedColumn // Запоминаем сортируешуюся колонку
 
 function calculateData(date, toCalculate){
-	var nowadayTime = new Date()
-	var setDate = new Date(date)
+	let nowadayTime = new Date()
+	let setDate = new Date(date)
 
 	if ( toCalculate == 'age' ){
-		var age = (nowadayTime - setDate) / 1000 / 60 / 60 / 24 / 365
-		var lastNumeral = Math.floor(age) % 10 // последняя цифра в числе
-		var ymw // типа year month week
+		let age = (nowadayTime - setDate) / 1000 / 60 / 60 / 24 / 365
+		let lastNumeral = Math.floor(age) % 10 // последняя цифра в числе
+		let ymw // типа year month week
 
 		if ( Math.floor(age) >= 1 ){
 			if ( lastNumeral == 1 ) ymw = 'год'
@@ -135,31 +135,31 @@ function calculateData(date, toCalculate){
 				if ( lastNumeral > 1 ) ymw = 'недели'
 			}
 		}
-		var result = Math.floor(age) + ' ' + ymw
+		let result = Math.floor(age) + ' ' + ymw
 		if ( result == 'NaN undefined'){
-			return null
+			return ''
 		}else{
 			return result
 		}
 	}
 	if ( toCalculate == 'registration' ){
-		var days = ('0' + setDate.getDate()).slice(-2),
+		let days = ('0' + setDate.getDate()).slice(-2),
 			month = ('0' + (setDate.getMonth() + 1)).slice(-2),
 			year = setDate.getFullYear()
-		var result = days + '.' + month + '.' + year
+		let result = days + '.' + month + '.' + year
 		if ( result == 'aN.aN.NaN' ){
-			return null
+			return ''
 		}else{
 			return result
 		}
 	}
 }
 function toKeyboardLayout(str, lang) {
-	var newStr = str.split('') // делаем массив из заданной строки 
+	let newStr = str.split('') // делаем массив из заданной строки 
 
 	for ( i in newStr ){
 		if ( lang == 'en' ){
-			var letterIndex = rusLetters.sml.indexOf(newStr[i]) // индекс нашей мал. буквы в массиве
+			let letterIndex = rusLetters.sml.indexOf(newStr[i]) // индекс нашей мал. буквы в массиве
 
 			if ( letterIndex >= 0 ){ // если есть то изменяем новую строку
 				newStr[i] = engLetters.sml[letterIndex]
@@ -174,7 +174,7 @@ function toKeyboardLayout(str, lang) {
 		}
         // повторяем только если lang == 'ru'
 		if ( lang == 'ru' ){
-			var letterIndex = engLetters.sml.indexOf(newStr[i])
+			let letterIndex = engLetters.sml.indexOf(newStr[i])
 
 			if ( letterIndex >= 0 ){
 				newStr[i] = rusLetters.sml[letterIndex]
@@ -202,17 +202,18 @@ function toKeyboardLayout(str, lang) {
 
 function dataSearch(config, data, tableToChange){
 
-	var tableBox = tableToChange.parentNode // наш див
-	var input = tableBox.querySelector('.table-search')
-	input.parentNode.querySelector('span').innerText = '' // убираем текст со спана
+	let tableBox = tableToChange.parentNode // наш див
+	let input = tableBox.querySelector('.table-search')
+	let nothingFound = input.parentNode.querySelector('span')
+	nothingFound.innerText = '' // убираем текст со спана
 
-	tableToChange.innerHTML = '' // убираем таблицу
+	tableToChange.innerHTML = '' // очищаем таблицу
 
 	// СОЗДАЕМ ИНДЕКС ДЛЯ РАБОТЫ С ОПРЕДЕЛЕННЫМИ ДАННЫМИ ОПРЕДЕЛЕННОЙ ТАБЛИЦЫ
 	tableIndex = tableArray.indexOf(tableBox)
 
-	var searchValues = [] // Элементы в fields
-	var paramIndex = 0
+	let searchValues = [] // Элементы в fields
+	let paramIndex = 0
 	// БЕРЕМ ВСЕ value У ДАННЫХ ШАПКИ И ВСЕ КИДАЕМ В searchValues 
 	// можно конечно просто прировнять, а потом удалить '_index', но
 	// если у нас будет несколько элементов которые мы не должны брать?
@@ -226,12 +227,10 @@ function dataSearch(config, data, tableToChange){
 	// ЕСЛИ ЕСТЬ fields и он заполнен норм данными
 	if ( config.search?.fields ){
 		if ( config.search.fields.length > 0 &&
-
 			 config.search.fields[0] !== undefined &&
 			 config.search.fields[0] !== null &&
 			 config.search.fields[0] !== false &&
-			 config.search.fields[0] !== true &&
-			 config.search.fields[0] !== [] ){
+			 config.search.fields[0] !== true ){
 
 			// приравниваем searchValues до fields
 			searchValues = config.search.fields
@@ -268,7 +267,7 @@ function dataSearch(config, data, tableToChange){
 	}
 	// ЕСЛИ НЕ НАШЛО
 	if ( data.length == 0 ){
-		input.parentNode.querySelector('span').innerText = 'Ничего не найдено'  // добавляем текст до спана
+		nothingFound.innerText = 'Ничего не найдено'  // добавляем текст до спана
 		onSearch[tableIndex] = false // ничего не нашли
 		data = [ ...defaultArrays[tableIndex] ] 
 	}
@@ -307,55 +306,93 @@ function saveSort(column, data){
 
 function sortTable(config, data, column, tableToChange) {
 	
-		var tableBox = tableToChange.parentNode // наш див
-		tableToChange.innerHTML = '' // убираем таблицу
+	let tableBox = tableToChange.parentNode // наш див
+	tableToChange.innerHTML = '' // убираем таблицу
 
-		// СОЗДАЕМ ИНДЕКС ДЛЯ РАБОТЫ С ОПРЕДЕЛЕННЫМИ ДАННЫМИ ОПРЕДЕЛЕННОЙ ТАБЛИЦЫ
-		tableIndex = tableArray.indexOf(tableBox)
-		sortedColumn = column
+	// СОЗДАЕМ ИНДЕКС ДЛЯ РАБОТЫ С ОПРЕДЕЛЕННЫМИ ДАННЫМИ ОПРЕДЕЛЕННОЙ ТАБЛИЦЫ
+	tableIndex = tableArray.indexOf(tableBox)
+	sortedColumn = column
 
-		// В том случае если мы ищем
-		// Чтобы при сортировке, когда toSort == 3 присваивался дефолтный массив именно с найденных элементов
-		if ( toSort[tableIndex] == 0 && onSearch[tableIndex] == true ){
-			defaultSeacrhedData[tableIndex] = [ ...data ]
-		}
-
-		toSort[tableIndex]++
-
-		if ( toSort[tableIndex] == 1 ){
-			data.sort( (a, b) => b[column.value] > a[column.value] ? 1 : -1  )
-		}
-		if ( toSort[tableIndex] == 2 ){
-			data.sort( (a, b) => b[column.value] < a[column.value] ? 1 : -1  )
-		}
-		if ( toSort[tableIndex] == 3 ){
-				
-			toSort[tableIndex] = 0
-			if ( onSearch[tableIndex] == false ){ // если мы ничего не нашли или не искали
-				data = [ ...defaultArrays[tableIndex] ]
-			}
-			else { // если нашли
-				data = [ ...defaultSeacrhedData[tableIndex] ]
-			}
-		}
-		drawTable(config, data) // Делаем таблицу
+	// В том случае если мы ищем
+	// Чтобы при сортировке, когда toSort == 3 присваивался дефолтный массив именно с найденных элементов
+	if ( toSort[tableIndex] == 0 && onSearch[tableIndex] == true ){
+		defaultSeacrhedData[tableIndex] = [ ...data ]
 	}
 
+	toSort[tableIndex]++
+
+	if ( toSort[tableIndex] == 1 ){
+		data.sort( (a, b) => b[column.value] > a[column.value] ? 1 : -1  )
+	}
+	if ( toSort[tableIndex] == 2 ){
+		data.sort( (a, b) => b[column.value] < a[column.value] ? 1 : -1  )
+	}
+	if ( toSort[tableIndex] == 3 ){
+			
+		toSort[tableIndex] = 0
+		if ( onSearch[tableIndex] == false ){ // если мы ничего не нашли или не искали
+			data = [ ...defaultArrays[tableIndex] ]
+		}
+		else { // если нашли
+			data = [ ...defaultSeacrhedData[tableIndex] ]
+		}
+	}
+	drawTable(config, data) // Делаем таблицу
+}
+function createTopMenu(tableDiv, table, config, data){
+	if ( config.search == true || config.search?.fields || config.search?.filters ){
+
+		let inputBox = document.createElement('div')
+		let nothingFound = document.createElement('span') // Для текста ничего не найдено
+		let searchInput = document.createElement('input')
+
+		inputBox.className = 'input-box'
+
+		searchInput.type = 'text'
+		searchInput.placeholder = 'Search...'
+		searchInput.className = 'table-search'
+		inputBox.appendChild(searchInput) // записую здесь для последовательновсти записи элементов
+
+		for ( col of config.columns ){
+			if ( col.editable === true ){
+
+				let addButton = document.createElement('button') // Кнопка добавить
+				addButton.innerText = 'Добавить'
+				addButton.className = 'action-button add-btn'
+				addButton.dataset.target = 'tableModal'
+				addButton.onclick = () => {
+					makePostModal(config, data, table)
+					openModal(addButton)
+				}
+
+				inputBox.appendChild(addButton)
+				break
+			}
+		}
+
+		inputBox.appendChild(nothingFound)
+		tableDiv.prepend(inputBox)
+
+		searchInput.oninput = () => {
+			dataSearch(config, data, table)
+		}
+	}
+}
 function drawTable(config, data){
 
 	// СОЗДАЕМ ТАБЛИЦУ
-	var tableName = config.parent
-	var tableDiv = document.querySelector(tableName) // наш див
-	var table = tableDiv.querySelector('.jstable')
+	let tableName = config.parent
+	let tableDiv = document.querySelector(tableName) // наш див
+	let table = tableDiv.querySelector('.jstable')
 
-	var index = 0 // для id (будет увеличиваться с каждой строкой)
+	let index = 0 // для id (будет увеличиваться с каждой строкой)
 
-	var thead = document.createElement('thead'), 
+	let thead = document.createElement('thead'), 
 	    tbody = document.createElement('tbody'),
 	    trHead = document.createElement('tr') // tr для шапки таблицы (семантическое значение)
 
 	for ( let col of config.columns ){ // тут берем объекты в config.columns
-    	var th
+    	let th
     	th = document.createElement('th')
     	th.className = 'jstd-and-th'
     	th.innerText = col.title
@@ -394,50 +431,49 @@ function drawTable(config, data){
 
     // Действия
     if ( config.actionButtons == true){
-    	var th = document.createElement('th')
+    	let th = document.createElement('th')
 	    th.className = 'jstd-and-th'
 	    th.innerText = 'Действия'
 	    trHead.appendChild(th)
     }
 
-    for ( var dataObj = 0; dataObj < data.length; dataObj++ ){
-    	var trBody
+    for ( let dataObj = 0; dataObj < data.length; dataObj++ ){
+    	let trBody
     	trBody = document.createElement('tr')
     	index++
 
-    	for ( var configObj = 0; configObj < config.columns.length; configObj++ ){
-    		var td
+    	for ( let configObj = 0; configObj < config.columns.length; configObj++ ){
+    		let td
     		td = document.createElement('td')
     		td.className = 'jstd-and-th'
 
-    		var configValue = config.columns[configObj].value // наш value в config'e
-    		td.innerText = data[dataObj][configValue] // через value ↑ находим свойство в data и берем ее значение
-    		if ( configValue == '_index' ){ 
+    		let columnValue = config.columns[configObj].value // наш value в config'e
+    		td.innerText = data[dataObj][columnValue] // через value ↑ находим свойство в data и берем ее значение
+    		if ( columnValue == '_index' ){ 
     			td.innerText = index
     			td.className = 'id jstd-and-th'
     		}
 
-    		var type = config.columns[configObj].type // берем type у значения свойства
+    		let type = config.columns[configObj].type // берем type у значения свойства
     		if ( type == 'number' ){
     			td.align = 'right'
     		}
     		// Для аватаров
     		if ( type == 'avatar' ){
     			td.innerText = ''
-    			var avatar
-    			var avaDiv
+    			let avatar
+    			let avaDiv
     			avaDiv = document.createElement('div')
     			avaDiv.className = 'avatar-box'
     			avatar = document.createElement('img')
-    			avatar.src = data[dataObj][configValue]
+    			avatar.src = data[dataObj][columnValue]
     			avaDiv.appendChild(avatar)
     			td.appendChild(avaDiv)
     		}
     		// берем свойства у каждого юзера
     		var directDataProperties = Object.keys(data[dataObj])
-    		if ( typeof configValue === 'function' ){
-				data[dataObj][configValue] = data[dataObj][directDataProperties[configObj]] // для правильной сортировки
-				
+    		if ( typeof columnValue === 'function' ){
+				data[dataObj][columnValue] = data[dataObj][directDataProperties[configObj]] // для правильной сортировки
     			td.innerText = config.columns[configObj].value(data[dataObj])
     		}
     		trBody.appendChild(td) // <td> => <tr>
@@ -446,21 +482,30 @@ function drawTable(config, data){
     	// Действия
     	if ( config.actionButtons == true ){
     		let directId = data[dataObj].id
-
+    		let indexForPut = index
 	    	let td = document.createElement('td')
 
 	    	let deleteButton = document.createElement('button') // Удалить
 	    	deleteButton.innerText = 'Удалить'
 		    deleteButton.className = 'action-button del-btn'
+		    let putButton = document.createElement('button') // Редактировать
+		    putButton.innerText = 'Редактировать'
+		    putButton.className = 'action-button edit-btn'
+		    putButton.dataset.target = 'tableModal'
 
 		    deleteButton.onclick = () => {
 		    	deleteData(directId, config.apiUrl, config, data, table)
+		    }
+		    putButton.onclick = () => {
+		    	makePutModal(directId, indexForPut, directDataProperties, config, data, table)
+		    	openModal(putButton)
 		    }
 		    
 		    td.align = 'right'
 		    td.className = 'jstd-and-th'
 
 	    	td.appendChild(deleteButton)
+	    	td.appendChild(putButton)
 			trBody.appendChild(td)
     	}
 
@@ -475,119 +520,171 @@ function drawTable(config, data){
 	thead.appendChild(trHead)    // <tr> => <thead>
 	table.appendChild(thead) // <thead> => <table>
 	table.appendChild(tbody) // <tbody> => <table>
-
 }
-function makeModal(idParam, config, data, tableToChange){
-	var bodyField = document.body
+function makePutModal(id, index, directDataProperties, config, data, tableToChange){
 
-	// Делаем модалку
-	var modalBody = document.createElement('div')
-	var modalBg = document.createElement('div')
-	var modalContent = document.createElement('div')
-	var modalHeader = document.createElement('div')
-	var modalMain = document.createElement('div')
-	var modalFooter = document.createElement('div')
-	var modalInputBox = document.createElement('div')
-	var modalBtnBox = document.createElement('div')
+	let modalHeadline = document.querySelector('.dataModal-headline')
+	let modalInputBox = document.querySelector('.dataModal-inputbox')
+	let modalBtnBox = document.querySelector('.dataModal-btnbox')
 
-	modalBody.id = `table${idParam}`
-	modalBody.className = 'modal'
-	bodyField.prepend(modalBody)
+	modalHeadline.innerText = 'Изменить пользователя'
 
-	modalBg.className = 'modal-bg'
-	modalContent.className = 'modal-content'
-	modalBody.appendChild(modalBg)
-	modalBody.appendChild(modalContent)
+	for ( configObj in config.columns ){
+		if ( config.columns[configObj].value != '_index' ){
 
-	modalHeader.className = 'modal-header'
-	modalMain.className = 'modal-main'
-	modalFooter.className = 'modal-footer'
-	modalContent.appendChild(modalHeader)
-	modalContent.appendChild(modalMain)
-	modalContent.appendChild(modalFooter)
+			// make an input
+			let input = document.createElement('input')
+			input.value = data[index-1][directDataProperties[configObj]]
+			input.className = 'dataModal-input'
+			input.placeholder = config.columns[configObj].title
+			input.dataset.val = config.columns[configObj].value
+			if ( typeof config.columns[configObj].value == 'function' ){
+				input.dataset.val = config.columns[configObj].extraValue
+			}
+			modalInputBox.appendChild(input)
+		}
+	}
+	let editInputs = document.querySelectorAll('.dataModal-input')
+	let putBtn = document.createElement('button')
+	putBtn.innerText = 'Изменить'
+	putBtn.className = 'dataModal-btn'
+	putBtn.onclick = () => {
+		editUser(id, editInputs, config, data, tableToChange)
+	}
+	modalBtnBox.appendChild(putBtn)
+}
+function editUser(id, inputs, config, data, tableToChange){
 
-	modalInputBox.className = 'modal-inputbox'
-	modalBtnBox.className = 'modal-btnbox'
-	modalMain.appendChild(modalInputBox)
-	modalFooter.appendChild(modalBtnBox)
+	let unknowUserImg = 'https://cutt.ly/BgHyXI9'
 
-	var modalHeadline = document.createElement('h2')
+	let editedUser = {}
+	let inputIndex = 0, columnIndex = 0
+	while(inputIndex < inputs.length && columnIndex < config.columns.length){
+
+		// fill user by inputs
+		let inputDatasetVal = inputs[inputIndex].dataset.val
+		editedUser[inputDatasetVal] = inputs[inputIndex].value
+
+		if ( config.columns[columnIndex].value == '_index' ){
+			columnIndex++
+			continue
+		}else{
+			// date to json
+			if ( config.columns[columnIndex].tojson == true && editedUser[inputDatasetVal] != '' ){
+
+				let date = new Date(editedUser[inputDatasetVal])
+				editedUser[inputDatasetVal] = date.toJSON()
+			}
+		}
+		
+		inputIndex++
+		columnIndex++
+	}
+    if (editedUser.avatar == '') editedUser.avatar = unknowUserImg
+    console.log(editedUser)
+	putData(id, editedUser, config.apiUrl, config, data, tableToChange)
+	closeDataModal()
+}
+function makePostModal(config, data, tableToChange){
+
+	let modalHeadline = document.querySelector('.dataModal-headline')
+	let modalInputBox = document.querySelector('.dataModal-inputbox')
+	let modalBtnBox = document.querySelector('.dataModal-btnbox')
+
 	modalHeadline.innerText = 'Добавить пользователя'
-	modalHeader.appendChild(modalHeadline)
-
-	// add inputs
+	
+	// post inputs
 	for ( configObj in config.columns ){
 		if ( config.columns[configObj].editable === true ){
 			
-			var configValue = config.columns[configObj].title
+			let columnTitle = config.columns[configObj].title
 			
-			var addInput = document.createElement('input')
-			addInput.placeholder = configValue
-			addInput.dataset.val = config.columns[configObj].value 
-			
+			let input = document.createElement('input')
+			input.placeholder = columnTitle
+			input.className = 'dataModal-input'
+			input.dataset.val = config.columns[configObj].value 
 			if ( typeof config.columns[configObj].value == 'function' ){
-				addInput.dataset.val = config.columns[configObj].extraValue 
+				input.dataset.val = config.columns[configObj].extraValue 
 			}
-			addInput.className = 'add-input'
-			modalInputBox.appendChild(addInput)
+
+			modalInputBox.appendChild(input)
 		}
 	}
 
-	var addInputs = modalInputBox.querySelectorAll('.add-input')
-	var acceptBtn = document.createElement('button')
+	let addInputs = modalInputBox.querySelectorAll('.dataModal-input')
+	let acceptBtn = document.createElement('button')
 	acceptBtn.innerText = 'Добавить'
-	acceptBtn.className = 'modal-btn'
+	acceptBtn.className = 'dataModal-btn'
 	acceptBtn.onclick = () => {
 		makeUser(addInputs, config, data, tableToChange)
 	}
 	modalBtnBox.appendChild(acceptBtn)
 }
 function makeUser(inputs, config, data, tableToChange){
-	var modals = document.querySelectorAll('.modal')
 
+	let unknowUserImg = 'https://cutt.ly/BgHyXI9'
+	
 	let newUser = {}
-	let isUnknowUserData = newUser[col.value] === undefined
-	let unknowUserImg = 'https://www.gravatar.com/avatar/ea41702be6bc8aaab3f62a20184b0cc8?size=200&d=https%3A%2F%2Fsalesforce-developer.ru%2Fwp-content%2Fuploads%2Favatars%2Fno-avatar.jpg'
+	let inputIndex = 0, columnIndex = 0
+	while( inputIndex < inputs.length && columnIndex < config.columns.length ){
 
-	// делаем объект с пустыми свойствами
-	for ( col of config.columns ){
-		if ( typeof col.value == 'function' ){
-			newUser[col.extraValue] = ''
-		}else{
-			newUser[col.value] = ''
+		let inputDatasetVal = inputs[inputIndex].dataset.val
+		if ( config.columns[columnIndex].value == '_index' ){
+			columnIndex++
+			continue
 		}
-		if ( isUnknowUserData && col.type == 'avatar' ){
-			newUser[col.value] = unknowUserImg
-		}
-	}
-	// заполняем объект
-	for ( input of inputs ){
-		newUser[input.dataset.val] = input.value
-		// делаем время в джсон формате
-		if ( moment(input.value, 'DD.MM.YYYY').toISOString() !== null ){
-			newUser[input.dataset.val] = moment(input.value, 'DD.MM.YYYY').toISOString()
-		}
-		for (col of config.columns){
-			// если картинки нет или ничего не заполняли
-			if ( col.type == 'avatar' && newUser[col.value] == '' ){
-				newUser[input.dataset.val] = unknowUserImg
+		if ( config.columns[columnIndex].editable === undefined ){
+			let columnValue = config.columns[columnIndex].value
+			let columnExtraValue = config.columns[columnIndex].extraValue
+			// у тех кого нету editable делаем пустыми
+			if ( typeof columnValue != 'function' ){
+				newUser[columnValue] = ''
+			}else{
+				newUser[columnExtraValue] = ''
 			}
 		}
-	}
+		else{
+			newUser[inputDatasetVal] = inputs[inputIndex].value
+			// date to json
+			if (config.columns[columnIndex].tojson == true){
 
-	delete newUser['_index']
-	putData(newUser, config.apiUrl, config, data, tableToChange)
-	closeModal(modals)
-}
-function closeModal(modalList){
-	for (var modal of modalList){
-		modal.style.visibility = "hidden";
-		document.body.classList.remove('body-hidden');
+				let date = new Date(newUser[inputDatasetVal])
+				newUser[inputDatasetVal] = date.toJSON()
+				if (newUser[inputDatasetVal] === null) newUser[inputDatasetVal] = ''
+			}
+			// если заполнилось, теми данными что editable, то переходим к другому инпуту
+			inputIndex++
+		}
+		columnIndex++
 	}
+	if (newUser.avatar == '') newUser.avatar = unknowUserImg
+
+	postData(newUser, config.apiUrl, config, data, tableToChange)
+	closeDataModal()
 }
-async function putData(user, url, config, data, tableToChange){
+async function putData(id, user, url, config, data, tableToChange){
+
+	let tableBox = tableToChange.parentNode
+	tableIndex = tableArray.indexOf(tableBox)
+
+	await fetch(url + '/' + id, {
+		method: 'put',
+		body: JSON.stringify(user),
+		headers:{
+			'Content-type': 'application/json'
+		}
+	})
+	await getApi(url)
+		.then( newData => data = newData)
+
+	defaultArrays[tableIndex] = [ ...data ]
+	tableToChange.innerHTML = ''
+
+	dataSearch(config, data, tableToChange)
+}
+async function postData(user, url, config, data, tableToChange){
 	
-	var tableBox = tableToChange.parentNode
+	let tableBox = tableToChange.parentNode
 	tableIndex = tableArray.indexOf(tableBox)
 
 	await fetch(url, {
@@ -601,14 +698,13 @@ async function putData(user, url, config, data, tableToChange){
 		.then( newData => data = newData )
 
 	defaultArrays[tableIndex] = [ ...data ]
-	// очищаем таблицу
-	tableToChange.innerText = ''
+	tableToChange.innerHTML = ''
 
 	dataSearch(config, data, tableToChange)
 }
 async function deleteData(id, url, config, data, tableToChange){
 
-		var tableBox = tableToChange.parentNode // наш див
+		let tableBox = tableToChange.parentNode // наш див
 		tableIndex = tableArray.indexOf(tableBox)
 
 		await fetch(url + '/' + id, {
@@ -622,15 +718,16 @@ async function deleteData(id, url, config, data, tableToChange){
 		tableToChange.innerHTML = ''
 
 		// чтобы сохраняло и сортировку, и поиск при удалении
-		// тут есть и сохранение сортировки и рисование таблички. Удобно получилось
+		// тут есть и сохранение сортировки и рисование таблички. Удобненько получилось
 		dataSearch(config, data, tableToChange)
 }
 async function getApi(url){
-	var request = await fetch(url)
-	var response = await request.json()
+	let request = await fetch(url)
+	let response = await request.json()
 
 	return response
 }
+
 async function dataTable(config, data) {
 	
 	if ( data === undefined ){
@@ -638,69 +735,13 @@ async function dataTable(config, data) {
 			.then( apiData => data = apiData )
 	}
 
-	var tableName = config.parent
-	var tableDiv = document.querySelector(tableName) // наш див
-
-	var table = document.createElement('table') // таблица
+	let tableName = config.parent
+	let tableDiv = document.querySelector(tableName) // див по айди
+	let table = document.createElement('table') // тег таблица
 	table.className = 'jstable'
+	tableDiv.appendChild(table)
 
-	// ДОБАВЛЯЕМ ЭЛЕМЕНТЫ В input-box ДЛЯ ПОИСКА
-	if ( config.search == true || config.search?.fields || config.search?.filters ){
-
-		var inputBox = document.createElement('div')
-		
-		var nothingFound = document.createElement('span') // Для текста ничего не найдено
-		var searchInput = document.createElement('input')
-
-		inputBox.className = 'input-box'
-
-		searchInput.type = 'text'
-		searchInput.placeholder = 'Search...'
-		searchInput.className = 'table-search'
-		inputBox.appendChild(searchInput) // записую здесь для последовательновсти записи элементов
-
-		for ( col of config.columns ){
-			if ( col.editable === true ){
-
-				makeModal(tableIteration, config, data, table) // делаем модальное окно
-
-				var addButton = document.createElement('button') // Кнопка добавить
-				addButton.innerText = 'Добавить'
-				addButton.className = 'action-button add-btn'
-				addButton.dataset.target = `table${tableIteration}`
-				addButton.onclick = () => {
-					openModal(addButton)
-				}
-
-				inputBox.appendChild(addButton)
-				break
-			}
-		}
-
-		inputBox.appendChild(nothingFound)
-		tableDiv.appendChild(inputBox)
-
-		searchInput.oninput = () => {
-			dataSearch(config, data, table)
-		}
-	}
-
-	tableDiv.appendChild(table) // <table> => див
-
-	var modals = document.querySelectorAll('.modal');
-	var modalHeader = document.querySelector('.modal-header');
-	var modalBg = document.querySelector('.modal-bg')
-	var closer = document.createElement('div');
-
-	closer.className = 'closer';
-	closer.onclick = () => {
-		closeModal(modals)
-	}
-	modalBg.onclick = () => {
-		closeModal(modals)
-	}
-	
-	modalHeader.appendChild(closer);
+	createTopMenu(tableDiv, table, config, data)
 
 	// ДЕЛАЕМ МАССИВЫ С ДАННЫМИ ПРО КАЖДУЮ ТАБЛИЦУ
 	tableArray.push(tableDiv)
@@ -709,7 +750,6 @@ async function dataTable(config, data) {
 	defaultArrays[tableIteration] = [ ...data ]
 	onSearch[tableIteration] = false
 
-	// РИСУЕМ ТАБЛИЦУ
 	drawTable(config, data, table)
 
 	tableIteration++

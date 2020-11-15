@@ -59,35 +59,26 @@
 	</div>
 	
 	<!-- Модальное Окно //////////////////////////////////////////// -->
-	<div class="modal" id="send">
-		<div class="modal-bg"></div>
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2>Lorem ipsum dolor</h2>
+	<div class="dataModal" id="tableModal">
+		<div class="dataModal-bg"></div>
+		<div class="dataModal-content">
+			<div class="dataModal-header">
+				<h2 class="dataModal-headline"></h2>
 			</div>
-			<div class="modal-main">
-				<div class="modal-text">
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab atque eveniet, corporis assumenda quis natus dolorem illo iste</p>
-					<p>Iste eos, dolorem obcaecati doloribus expedita qui cupiditate voluptatum assumenda nesciunt quia provident recusandae at consectetur enim aut</p>
-					<p>debitis libero saepe vitae itaque laborum repudiandae reprehenderit. Numquam consequatur veritatis officia quibusdam suscipit!</p>		
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab atque eveniet, corporis assumenda quis natus dolorem illo iste</p>
-					<p>Iste eos, dolorem obcaecati doloribus expedita qui cupiditate voluptatum assumenda nesciunt quia provident recusandae at consectetur enim aut</p>
-					<p>debitis libero saepe vitae itaque laborum repudiandae reprehenderit. Numquam consequatur veritatis officia quibusdam suscipit!</p>
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab atque eveniet, corporis assumenda quis natus dolorem illo iste</p>
-					<p>Iste eos, dolorem obcaecati doloribus expedita qui cupiditate voluptatum assumenda nesciunt quia provident recusandae at consectetur enim aut</p>
-					<p>debitis libero saepe vitae itaque laborum repudiandae reprehenderit. Numquam consequatur veritatis officia quibusdam suscipit!</p>					
+			<div class="dataModal-main">
+				<div class="dataModal-inputbox">
+								
 				</div>
 			</div>
-			<div class="modal-footer">
-				<div class="modal-btnbox">
-					<button class="modal-btn" onclick="closed()">Подтвердить</button>
-					<button class="modal-btn" onclick="closed()">Отменить</button>
+			<div class="dataModal-footer">
+				<div class="dataModal-btnbox">
+					
 				</div>
 			</div>
 		</div>
 	</div>		
 
-	<button class="modal-trigger button" data-target="send" onclick="openModal(this)">Открыть модалку</button>
+	<button class="modal-trigger button" data-target="tableModal" onclick="openModal(this)">Открыть модалку</button>
     
     <!-- Бургер //////////////////////////////////////////// -->
 	<nav>
@@ -137,9 +128,7 @@
 		 для возможности использовать свойство которое есть в api
 		 (например extraValue: "createdAt", value: function(...){...} ) -->
 
-	<!-- Добавлен moment.js для коректного использования даты -->
-
-	<script type="text/javascript" src="moment/moment.min.js"></script>
+	<!-- Убран момент, вместо него теперь toJSON() -->
 	<script type="text/javascript" src="data-tables/data-tables.js"></script> <!-- js таблица -->
 	<script type="text/javascript" src="carousel/carousel.js"></script> <!-- js карусель -->
 	<script type="text/javascript" src="burger/burger.js"></script> <!-- js бургер -->

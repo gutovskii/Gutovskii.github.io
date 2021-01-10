@@ -13,7 +13,7 @@
   <link rel="stylesheet/less" href="burger/burger.less"> <!-- бургер -->
   <link rel="stylesheet/less" href="carousel/carousel.less"> <!-- карусель -->
   <link rel="stylesheet/less" href="data-tables/data-tables.less"> <!-- таблица -->
-
+  <link rel="stylesheet/less" href="my-input/my-input.less"> <!-- инпуты -->
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/less.js/3.9.0/less.min.js" ></script>
@@ -21,6 +21,7 @@
 <body>
 
 	<!-- Grid Сетка //////////////////////////////////////////// -->
+	<h2>Grid-Сетка</h2>
   	<div class="container">
 		<div class="row">
 			
@@ -49,6 +50,7 @@
   	</div>
 	
 	<!-- Кнопка //////////////////////////////////////////// -->
+	<h2>Buttons</h2>
 	<div class="row">
 		<button class="button"><i class="fas fa-check"></i>Accept a form</button>
 		<a href="#" class="button"><i class="fas fa-check"></i>Accept a form</a>
@@ -59,6 +61,7 @@
 	</div>
 	
 	<!-- Модальное Окно //////////////////////////////////////////// -->
+	<h2>Modal</h2>
 	<div class="dataModal" id="tableModal">
 		<div class="dataModal-bg"></div>
 		<div class="dataModal-content">
@@ -81,6 +84,7 @@
 	<button class="modal-trigger button" data-target="tableModal" onclick="openModal(this)">Открыть модалку</button>
     
     <!-- Бургер //////////////////////////////////////////// -->
+    <h2>Header + Burger</h2>
 	<nav>
 	    <div class="logo">   	
 	    	<img src="img/logo.png">
@@ -97,6 +101,7 @@
 	</nav>
 
 	<!-- Карусель //////////////////////////////////////////// -->
+	<h2>Slider</h2>
 	<div id="carousel1">
 	    <div id="arrow" class="left">
 	    	<i class="fas fa-arrow-left"></i>
@@ -120,7 +125,22 @@
 	    </div>
 	</div>
 
+	<h2>Vue inputs</h2>
+	<div id="app">
+	    <div class="inputs">
+	    	<my-input
+		        v-for="q in questions"
+		        :key="q.title"
+		        :type="q.type"
+		        :title="q.title"
+		        :placeholder="q.placeholder"
+		        :required="q.required"
+		    ></my-input>
+	    </div>
+	</div>
+
 	<!-- Таблица //////////////////////////////////////////// -->
+	<h2>Table</h2>
 	<div id="usersTable"></div>
 	<div id="myTable"></div>
 
@@ -128,7 +148,8 @@
 		 для возможности использовать свойство которое есть в api
 		 (например extraValue: "createdAt", value: function(...){...} ) -->
 
-	<!-- Убран момент, вместо него теперь toJSON() -->
+	<script src="https://unpkg.com/vue@next"></script> <!-- vue.js -->
+	<script type="text/javascript" src="my-input/my-input.js"></script>
 	<script type="text/javascript" src="data-tables/data-tables.js"></script> <!-- js таблица -->
 	<script type="text/javascript" src="carousel/carousel.js"></script> <!-- js карусель -->
 	<script type="text/javascript" src="burger/burger.js"></script> <!-- js бургер -->

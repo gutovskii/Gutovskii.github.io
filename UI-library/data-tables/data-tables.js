@@ -214,9 +214,7 @@ function dataSearch(config, data, tableToChange){
 
 	let searchValues = [] // Элементы в fields
 	let paramIndex = 0
-	// БЕРЕМ ВСЕ value У ДАННЫХ ШАПКИ И ВСЕ КИДАЕМ В searchValues 
-	// можно конечно просто прировнять, а потом удалить '_index', но
-	// если у нас будет несколько элементов которые мы не должны брать?
+	// БЕРЕМ ВСЕ value У ДАННЫХ ШАПКИ И ВСЕ КИДАЕМ В searchValues
 	for ( i in config.columns ){
 		// сюда ↓ добавляем элементы которые не нужно добавлять
 		if ( config.columns[i].value != '_index' ){
@@ -574,6 +572,7 @@ function editUser(id, inputs, config, data, tableToChange){
 
 				let date = new Date(editedUser[inputDatasetVal])
 				editedUser[inputDatasetVal] = date.toJSON()
+				if (editedUser[inputDatasetVal] === null) editedUser[inputDatasetVal] = ''
 			}
 		}
 		
@@ -581,9 +580,8 @@ function editUser(id, inputs, config, data, tableToChange){
 		columnIndex++
 	}
     if (editedUser.avatar == '') editedUser.avatar = unknowUserImg
-    console.log(editedUser)
+
 	putData(id, editedUser, config.apiUrl, config, data, tableToChange)
-	closeDataModal()
 }
 function makePostModal(config, data, tableToChange){
 
@@ -660,7 +658,6 @@ function makeUser(inputs, config, data, tableToChange){
 	if (newUser.avatar == '') newUser.avatar = unknowUserImg
 
 	postData(newUser, config.apiUrl, config, data, tableToChange)
-	closeDataModal()
 }
 async function putData(id, user, url, config, data, tableToChange){
 
@@ -681,6 +678,7 @@ async function putData(id, user, url, config, data, tableToChange){
 	tableToChange.innerHTML = ''
 
 	dataSearch(config, data, tableToChange)
+	closeDataModal()
 }
 async function postData(user, url, config, data, tableToChange){
 	
@@ -701,6 +699,7 @@ async function postData(user, url, config, data, tableToChange){
 	tableToChange.innerHTML = ''
 
 	dataSearch(config, data, tableToChange)
+	closeDataModal()
 }
 async function deleteData(id, url, config, data, tableToChange){
 
@@ -724,7 +723,7 @@ async function deleteData(id, url, config, data, tableToChange){
 async function getApi(url){
 	let request = await fetch(url)
 	let response = await request.json()
-
+	
 	return response
 }
 

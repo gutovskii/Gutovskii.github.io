@@ -125,16 +125,18 @@
 	    </div>
 	</div>
 
+	<!-- Вью инпуты //////////////////////////////////////////// -->
 	<h2>Vue inputs</h2>
 	<div id="app">
 	    <div class="inputs">
 	    	<my-input
-		        v-for="q in questions"
+		        v-for="(q, idx) in questions"
 		        :key="q.title"
 		        :type="q.type"
 		        :title="q.title"
 		        :placeholder="q.placeholder"
 		        :required="q.required"
+		        @blur="invalidInput($event)"
 		    ></my-input>
 	    </div>
 	</div>
@@ -149,11 +151,11 @@
 		 (например extraValue: "createdAt", value: function(...){...} ) -->
 
 	<script src="https://unpkg.com/vue@next"></script> <!-- vue.js -->
-	<script type="text/javascript" src="my-input/my-input.js"></script>
+	<script type="text/javascript" src="my-input/my-input.js"></script> <!-- js вью инпуты -->
 	<script type="text/javascript" src="data-tables/data-tables.js"></script> <!-- js таблица -->
 	<script type="text/javascript" src="carousel/carousel.js"></script> <!-- js карусель -->
 	<script type="text/javascript" src="burger/burger.js"></script> <!-- js бургер -->
-    <script type="text/javascript" src="modal/modal.js"></script> <!-- js модалка -->
-  	<script src="https://kit.fontawesome.com/a92211bf3b.js" crossorigin="anonymous"></script> <!-- fontawesome -->
+  <script type="text/javascript" src="modal/modal.js"></script> <!-- js модалка -->
+  <script src="https://kit.fontawesome.com/a92211bf3b.js" crossorigin="anonymous"></script> <!-- fontawesome -->
 </body>
 </html>

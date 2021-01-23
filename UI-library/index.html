@@ -132,12 +132,14 @@
 	    	<my-input
 		        v-for="(q, idx) in questions"
 		        :key="q.title"
-		        :type="q.type"
 		        :title="q.title"
+		        :type="q.type"
 		        :placeholder="q.placeholder"
 		        :required="q.required"
 		        @blur="invalidInput($event)"
-		    ></my-input>
+		        @click="show" 
+		        v-model="inputData[idx]"
+		    ></my-input> <!-- @click show покажет inputData, данные с инпутов -->
 	    </div>
 	</div>
 

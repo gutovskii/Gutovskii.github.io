@@ -79,7 +79,7 @@
 				</div>
 			</div>
 		</div>
-	</div>		
+	</div>
 
 	<button class="modal-trigger button" data-target="tableModal" onclick="openModal(this)">Открыть модалку</button>
     
@@ -136,8 +136,9 @@
 		        :type="q.type"
 		        :placeholder="q.placeholder"
 		        :required="q.required"
+		        :error-message="q.errorMessage"
+		        :pattern="q.pattern"
 		        @blur="invalidInput($event)"
-		        @click="show" 
 		        v-model="inputData[idx]"
 		    ></my-input> <!-- @click show покажет inputData, данные с инпутов -->
 	    </div>
